@@ -6,16 +6,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import com.wallet.crypto.trustapp.C;
+import com.wallet.crypto.trustapp.entity.Balance;
 import com.wallet.crypto.trustapp.entity.ErrorEnvelope;
 import com.wallet.crypto.trustapp.entity.NetworkInfo;
 import com.wallet.crypto.trustapp.entity.Transaction;
 import com.wallet.crypto.trustapp.entity.Wallet;
+import com.wallet.crypto.trustapp.interact.FetchTokensInteract;
 import com.wallet.crypto.trustapp.interact.FetchTransactionsInteract;
 import com.wallet.crypto.trustapp.interact.FindDefaultNetworkInteract;
 import com.wallet.crypto.trustapp.interact.FindDefaultWalletInteract;
-import com.wallet.crypto.trustapp.interact.GetDefaultWalletBalance;
 import com.wallet.crypto.trustapp.router.ExternalBrowserRouter;
 import com.wallet.crypto.trustapp.router.ManageWalletsRouter;
 import com.wallet.crypto.trustapp.router.MyAddressRouter;
@@ -23,24 +25,23 @@ import com.wallet.crypto.trustapp.router.MyTokensRouter;
 import com.wallet.crypto.trustapp.router.SendRouter;
 import com.wallet.crypto.trustapp.router.SettingsRouter;
 import com.wallet.crypto.trustapp.router.TransactionDetailRouter;
+import com.wallet.crypto.trustapp.util.BalanceUtils;
 
-import java.util.Map;
+import java.util.Arrays;
 
 import io.reactivex.Observable;
 
 public class TransactionsViewModel extends BaseViewModel {
     private static final long GET_BALANCE_INTERVAL = 10 * DateUtils.SECOND_IN_MILLIS;
     private static final long FETCH_TRANSACTIONS_INTERVAL = 12 * DateUtils.SECOND_IN_MILLIS;
+    private static final String TAG = TransactionsViewModel.class.getSimpleName();
     private final MutableLiveData<NetworkInfo> defaultNetwork = new MutableLiveData<>();
     private final MutableLiveData<Wallet> defaultWallet = new MutableLiveData<>();
     private final MutableLiveData<Transaction[]> transactions = new MutableLiveData<>();
-    private final MutableLiveData<Map<String, String>> defaultWalletBalance = new MutableLiveData<>();
-
+    private final MutableLiveData<Balance> defaultWalletBalance = new MutableLiveData<>();
     private final FindDefaultNetworkInteract findDefaultNetworkInteract;
     private final FindDefaultWalletInteract findDefaultWalletInteract;
-    private final GetDefaultWalletBalance getDefaultWalletBalance;
     private final FetchTransactionsInteract fetchTransactionsInteract;
-
     private final ManageWalletsRouter manageWalletsRouter;
     private final SettingsRouter settingsRouter;
     private final SendRouter sendRouter;
@@ -48,24 +49,24 @@ public class TransactionsViewModel extends BaseViewModel {
     private final MyAddressRouter myAddressRouter;
     private final MyTokensRouter myTokensRouter;
     private final ExternalBrowserRouter externalBrowserRouter;
-
+    private final FetchTokensInteract fetchTokensInteract;
     private Handler handler = new Handler();
+    private final Runnable startFetchTransactionsTask = () -> this.fetchTransactions(false);
+    private final Runnable startGetBalanceTask = this::getBalance;
 
     TransactionsViewModel(
             FindDefaultNetworkInteract findDefaultNetworkInteract,
             FindDefaultWalletInteract findDefaultWalletInteract,
             FetchTransactionsInteract fetchTransactionsInteract,
-            GetDefaultWalletBalance getDefaultWalletBalance,
             ManageWalletsRouter manageWalletsRouter,
             SettingsRouter settingsRouter,
             SendRouter sendRouter,
             TransactionDetailRouter transactionDetailRouter,
             MyAddressRouter myAddressRouter,
             MyTokensRouter myTokensRouter,
-            ExternalBrowserRouter externalBrowserRouter) {
+            ExternalBrowserRouter externalBrowserRouter, FetchTokensInteract fetchTokensInteract) {
         this.findDefaultNetworkInteract = findDefaultNetworkInteract;
         this.findDefaultWalletInteract = findDefaultWalletInteract;
-        this.getDefaultWalletBalance = getDefaultWalletBalance;
         this.fetchTransactionsInteract = fetchTransactionsInteract;
         this.manageWalletsRouter = manageWalletsRouter;
         this.settingsRouter = settingsRouter;
@@ -74,6 +75,7 @@ public class TransactionsViewModel extends BaseViewModel {
         this.myAddressRouter = myAddressRouter;
         this.myTokensRouter = myTokensRouter;
         this.externalBrowserRouter = externalBrowserRouter;
+        this.fetchTokensInteract = fetchTokensInteract;
     }
 
     @Override
@@ -96,7 +98,7 @@ public class TransactionsViewModel extends BaseViewModel {
         return transactions;
     }
 
-    public LiveData<Map<String, String>> defaultWalletBalance() {
+    public LiveData<Balance> defaultWalletBalance() {
         return defaultWalletBalance;
     }
 
@@ -115,14 +117,15 @@ public class TransactionsViewModel extends BaseViewModel {
         fetch.subscribe(this::onTransactions, this::onError, this::onTransactionsFetchCompleted);
     }
 
-    public void getBalance() {
-        getDefaultWalletBalance
-                .get(defaultWallet.getValue())
-                .subscribe(values -> {
-                    defaultWalletBalance.postValue(values);
+    private void getBalance() {
+        fetchTokensInteract.fetch(defaultWallet.getValue())
+                .flatMapIterable(tokens -> Arrays.asList(tokens))
+                .filter(token -> token.tokenInfo.symbol.toUpperCase().equals("APPC"))
+                .subscribe(token -> {
+                    defaultWalletBalance.postValue(new Balance(token.tokenInfo.symbol, BalanceUtils.subunitToBase(token.balance, token.tokenInfo.decimals).longValue()));
                     handler.removeCallbacks(startGetBalanceTask);
                     handler.postDelayed(startGetBalanceTask, GET_BALANCE_INTERVAL);
-                }, t -> {});
+                }, t -> Log.w(TAG, "getBalance: ", t));
     }
 
     private void onDefaultNetwork(NetworkInfo networkInfo) {
@@ -163,7 +166,9 @@ public class TransactionsViewModel extends BaseViewModel {
         settingsRouter.open(context);
     }
 
-    public void showSend(Context context) { sendRouter.open(context, defaultNetwork.getValue().symbol); }
+    public void showSend(Context context) {
+        sendRouter.open(context, defaultNetwork.getValue().symbol);
+    }
 
     public void showDetails(Context context, Transaction transaction) {
         transactionDetailRouter.open(context, transaction);
@@ -186,7 +191,4 @@ public class TransactionsViewModel extends BaseViewModel {
         externalBrowserRouter.open(context, uri);
     }
 
-    private final Runnable startFetchTransactionsTask = () -> this.fetchTransactions(false);
-
-    private final Runnable startGetBalanceTask = this::getBalance;
 }
