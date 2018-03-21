@@ -8,7 +8,6 @@ import com.asfoundation.wallet.interact.FindDefaultWalletInteract;
 import com.asfoundation.wallet.interact.SendTransactionInteract;
 import com.asfoundation.wallet.repository.ApproveService;
 import com.asfoundation.wallet.repository.BuyService;
-import com.asfoundation.wallet.repository.ErrorMapper;
 import com.asfoundation.wallet.repository.EthereumNetworkRepository;
 import com.asfoundation.wallet.repository.EthereumNetworkRepositoryType;
 import com.asfoundation.wallet.repository.GasSettingsRepositoryType;
@@ -81,19 +80,15 @@ import okhttp3.OkHttpClient;
   }
 
   @Provides ApproveService provideApproveService(SendTransactionInteract sendTransactionInteract,
-      PendingTransactionService pendingTransactionService, ErrorMapper errorMapper) {
+      PendingTransactionService pendingTransactionService) {
     return new ApproveService(sendTransactionInteract, pendingTransactionService,
-        new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()), errorMapper);
+        new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()));
   }
 
   @Provides BuyService provideBuyService(SendTransactionInteract sendTransactionInteract,
-      PendingTransactionService pendingTransactionService, ErrorMapper errorMapper) {
+      PendingTransactionService pendingTransactionService) {
     return new BuyService(sendTransactionInteract, pendingTransactionService,
-        new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()), errorMapper);
-  }
-
-  @Singleton @Provides ErrorMapper provideErrorMapper() {
-    return new ErrorMapper();
+        new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()));
   }
 
   @Provides GasSettingsRouter provideGasSettingsRouter() {

@@ -73,9 +73,9 @@ public class TransactionServiceTest {
         new TransferParser(defaultWalletInteract, tokenRepository),
         new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()),
         new ApproveService(sendTransactionInteract, pendingTransactionService,
-            new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()), new ErrorMapper()),
+            new MemoryCache<>(BehaviorSubject.create(), new HashMap<>())),
         new BuyService(sendTransactionInteract, pendingTransactionService,
-            new MemoryCache<>(BehaviorSubject.create(), new HashMap<>()), new ErrorMapper()));
+            new MemoryCache<>(BehaviorSubject.create(), new HashMap<>())));
   }
 
   @Test public void sendTransaction() throws Exception {
