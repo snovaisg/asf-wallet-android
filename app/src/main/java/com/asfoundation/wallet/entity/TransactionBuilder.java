@@ -198,8 +198,9 @@ public class TransactionBuilder implements Parcelable {
         + ", gasSettings="
         + gasSettings
         + '}';
-
-    @Override public int describeContents() {
+  }
+    
+  @Override public int describeContents() {
     return 0;
   }
 
