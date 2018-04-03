@@ -48,7 +48,7 @@ public class BuyServiceTest {
     buyService.start();
   }
 
-  @Test public void buy() throws Exception {
+  @Test public void buy() {
     String uri = "uri";
     TestObserver<PaymentTransaction> observer = new TestObserver<>();
     buyService.getBuy(uri)
@@ -65,5 +65,6 @@ public class BuyServiceTest {
     Assert.assertEquals(values.size(), 4);
     Assert.assertEquals(values.get(3)
         .getState(), PaymentTransaction.PaymentState.BOUGHT);
+    Assert.assertEquals(true, false);
   }
 }

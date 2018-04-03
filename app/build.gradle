@@ -103,6 +103,12 @@ android {
     targetCompatibility 1.8
     sourceCompatibility 1.8
   }
+
+
+  tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleRelease')
+      task.dependsOn('connectedAndroidTest')
+  }
 }
 
 project.ext {
