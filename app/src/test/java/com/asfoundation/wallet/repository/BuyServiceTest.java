@@ -65,6 +65,5 @@ public class BuyServiceTest {
     Assert.assertEquals(values.size(), 4);
     Assert.assertEquals(values.get(3)
         .getState(), PaymentTransaction.PaymentState.BOUGHT);
-    Assert.assertEquals(true, false);
   }
 }
