@@ -76,6 +76,7 @@ public class IabPresenter {
 
   private Completable showPendingTransaction(PaymentTransaction transaction) {
     Log.d(TAG, "present: " + transaction);
+    Log.d(TAG, "" + transaction);
     switch (transaction.getState()) {
       case COMPLETED:
         return Completable.fromAction(view::showTransactionCompleted)
