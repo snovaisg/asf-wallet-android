@@ -123,7 +123,7 @@ public class TransferParserTest {
             .test();
 
     test.assertValue(transactionBuilder -> transactionBuilder.amount()
-        .equals(new BigDecimal(1)));
+        .equals(new BigDecimal(2)));
     test.assertValue(transactionBuilder -> transactionBuilder.toAddress()
         .equals(toAddress));
     test.assertValue(transactionBuilder -> transactionBuilder.shouldSendToken() == false);
