@@ -16,7 +16,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
-
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +28,7 @@ import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.interact.AddTokenInteract;
 import com.asfoundation.wallet.poa.TransactionFactory;
 import com.asfoundation.wallet.transactions.Transaction;
+import com.asfoundation.wallet.ui.appcoins.applications.AppcoinsApplication;
 import com.asfoundation.wallet.ui.toolbar.ToolbarArcBackground;
 import com.asfoundation.wallet.ui.widget.adapter.TransactionsAdapter;
 import com.asfoundation.wallet.util.BalanceUtils;
@@ -49,6 +50,7 @@ import static com.asfoundation.wallet.C.ErrorCode.EMPTY_COLLECTION;
 public class TransactionsActivity extends BaseNavigationActivity implements View.OnClickListener {
 
   public static final String AIRDROP_MORE_INFO_URL = "https://appstorefoundation.org/asf-wallet";
+  private static final String TAG = TransactionsActivity.class.getSimpleName();
   @Inject TransactionsViewModelFactory transactionsViewModelFactory;
   @Inject AddTokenInteract addTokenInteract;
   @Inject TransactionFactory transactionFactory;
@@ -104,6 +106,8 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
         .observe(this, this::onDefaultWallet);
     viewModel.transactions()
         .observe(this, this::onTransactions);
+    viewModel.Applications()
+        .observe(this, this::onApplications);
     refreshLayout.setOnRefreshListener(() -> viewModel.fetchTransactions(true));
   }
 
@@ -121,9 +125,16 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
     return super.onOptionsItemSelected(item);
   }
 
+  private void onApplications(List<AppcoinsApplication> appcoinsApplications) {
+    Log.d(TAG,
+        "onApplications() called with: appcoinsApplications = [" + appcoinsApplications + "]");
+  }
+
   private void onBalanceChanged(Map<String, String> balance) {
     if (!balance.isEmpty()) {
-      Map.Entry<String,String> entry = balance.entrySet().iterator().next();
+      Map.Entry<String, String> entry = balance.entrySet()
+          .iterator()
+          .next();
       String currency = entry.getKey();
       String value = entry.getValue();
       int smallTitleSize = (int) getResources().getDimension(R.dimen.title_small_text);
