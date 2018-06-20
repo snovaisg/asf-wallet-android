@@ -11,4 +11,8 @@ public class AppcoinsApplication {
   @Override public String toString() {
     return "AppcoinsApplication{" + "name='" + name + '\'' + '}';
   }
+
+  public String getName() {
+    return name;
+  }
 }

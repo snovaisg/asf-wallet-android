@@ -75,7 +75,8 @@ public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> 
       }
       break;
       case AppcoinsApplicationListViewHolder.VIEW_TYPE:
-        holder = new AppcoinsApplicationListViewHolder(R.layout.item_appcoins_applications, parent);
+        holder =
+            new AppcoinsApplicationListViewHolder(R.layout.item_appcoins_application_list, parent);
     }
     return holder;
   }
