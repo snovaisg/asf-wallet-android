@@ -15,7 +15,11 @@ public class AppcoinsApplicationAdapter
     extends RecyclerView.Adapter<AppcoinsApplicationViewHolder> {
   private static final String TAG = AppcoinsApplicationAdapter.class.getSimpleName();
   private List<AppcoinsApplication> applications;
-  private Action1<AppcoinsApplication> applicationClickListener;
+  private final Action1<AppcoinsApplication> applicationClickListener;
+
+  public AppcoinsApplicationAdapter(Action1<AppcoinsApplication> applicationClickListener) {
+    this.applicationClickListener = applicationClickListener;
+  }
 
   @NonNull @Override
   public AppcoinsApplicationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,9 +36,7 @@ public class AppcoinsApplicationAdapter
     return applications.size();
   }
 
-  public void setApplications(List<AppcoinsApplication> applications,
-      Action1<AppcoinsApplication> applicationClickListener) {
-    this.applicationClickListener = applicationClickListener;
+  public void setApplications(List<AppcoinsApplication> applications) {
     Log.d(TAG, "setApplications() called with: applications = [" + applications + "]");
     this.applications = applications;
     notifyDataSetChanged();

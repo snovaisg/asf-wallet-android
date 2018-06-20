@@ -59,6 +59,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
   private TransactionsAdapter adapter;
   private Dialog dialog;
   private EmptyTransactionsView emptyView;
+  private RecyclerView list;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     AndroidInjection.inject(this);
@@ -85,7 +86,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
     SwipeRefreshLayout refreshLayout = findViewById(R.id.refresh_layout);
     systemView = findViewById(R.id.system_view);
 
-    RecyclerView list = findViewById(R.id.list);
+    list = findViewById(R.id.list);
     list.setLayoutManager(new LinearLayoutManager(this));
     list.setAdapter(adapter);
 
@@ -111,10 +112,6 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
     refreshLayout.setOnRefreshListener(() -> viewModel.fetchTransactions(true));
   }
 
-  private void onApplicationClick(AppcoinsApplication appcoinsApplication) {
-    viewModel.onAppClick(appcoinsApplication, getBaseContext());
-  }
-
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_settings: {
@@ -127,6 +124,10 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
       break;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  private void onApplicationClick(AppcoinsApplication appcoinsApplication) {
+    viewModel.onAppClick(appcoinsApplication, getBaseContext());
   }
 
   private void onApplications(List<AppcoinsApplication> appcoinsApplications) {
@@ -220,6 +221,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
 
   private void onTransactions(List<Transaction> transaction) {
     adapter.addTransactions(transaction);
+    list.setVisibility(View.VISIBLE);
     invalidateOptionsMenu();
   }
 

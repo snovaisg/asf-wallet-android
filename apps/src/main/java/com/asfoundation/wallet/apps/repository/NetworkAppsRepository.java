@@ -24,7 +24,9 @@ public class NetworkAppsRepository implements Repository {
     for (com.asfoundation.wallet.apps.repository.webservice.data.List application : applications
         .getDatalist()
         .getList()) {
-      apps.add(new App(application.getName()));
+      apps.add(new App(application.getName(), application.getStats()
+          .getPrating()
+          .getAvg(), application.getIcon()));
     }
     return apps;
   }

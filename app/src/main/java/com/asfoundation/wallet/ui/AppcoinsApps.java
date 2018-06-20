@@ -22,7 +22,8 @@ public class AppcoinsApps {
   private List<AppcoinsApplication> map(List<App> apps) {
     ArrayList<AppcoinsApplication> appcoinsApplications = new ArrayList<>();
     for (App app : apps) {
-      appcoinsApplications.add(new AppcoinsApplication(app.getName()));
+      appcoinsApplications.add(
+          new AppcoinsApplication(app.getName(), app.getRating(), app.getIconUrl()));
     }
     return appcoinsApplications;
   }

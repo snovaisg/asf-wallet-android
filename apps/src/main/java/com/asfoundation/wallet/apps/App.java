@@ -2,10 +2,13 @@ package com.asfoundation.wallet.apps;
 
 public class App {
   private final String name;
+  private final double rating;
+  private final String iconUrl;
 
-  public App(String name) {
-
+  public App(String name, double rating, String iconUrl) {
     this.name = name;
+    this.rating = rating;
+    this.iconUrl = iconUrl;
   }
 
   public String getName() {
@@ -27,5 +30,13 @@ public class App {
 
   @Override public String toString() {
     return "App{" + "name='" + name + '\'' + '}';
+  }
+
+  public double getRating() {
+    return rating;
+  }
+
+  public String getIconUrl() {
+    return iconUrl;
   }
 }
