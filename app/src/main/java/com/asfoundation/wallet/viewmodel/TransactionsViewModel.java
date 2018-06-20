@@ -223,4 +223,9 @@ public class TransactionsViewModel extends BaseViewModel {
   public LiveData<List<AppcoinsApplication>> Applications() {
     return appcoinsApplications;
   }
+
+  public void onAppClick(AppcoinsApplication appcoinsApplication, Context context) {
+    externalBrowserRouter.open(context,
+        Uri.parse("https://www.appstorefoundation.org/offer-wall#spendAppCoinsList"));
+  }
 }

@@ -81,7 +81,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
     initBottomNavigation();
     disableDisplayHomeAsUp();
 
-    adapter = new TransactionsAdapter(this::onTransactionClick);
+    adapter = new TransactionsAdapter(this::onTransactionClick, this::onApplicationClick);
     SwipeRefreshLayout refreshLayout = findViewById(R.id.refresh_layout);
     systemView = findViewById(R.id.system_view);
 
@@ -109,6 +109,10 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
     viewModel.Applications()
         .observe(this, this::onApplications);
     refreshLayout.setOnRefreshListener(() -> viewModel.fetchTransactions(true));
+  }
+
+  private void onApplicationClick(AppcoinsApplication appcoinsApplication) {
+    viewModel.onAppClick(appcoinsApplication, getBaseContext());
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {

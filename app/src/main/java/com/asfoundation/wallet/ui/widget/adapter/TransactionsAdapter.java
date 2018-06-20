@@ -19,6 +19,7 @@ import com.asfoundation.wallet.ui.widget.holder.BinderViewHolder;
 import com.asfoundation.wallet.ui.widget.holder.TransactionDateHolder;
 import com.asfoundation.wallet.ui.widget.holder.TransactionHolder;
 import java.util.List;
+import rx.functions.Action1;
 
 public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> {
 
@@ -53,12 +54,15 @@ public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> 
         }
       });
   private final OnTransactionClickListener onTransactionClickListener;
+  private final Action1<AppcoinsApplication> applicationClickListener;
 
   private Wallet wallet;
   private NetworkInfo network;
 
-  public TransactionsAdapter(OnTransactionClickListener onTransactionClickListener) {
+  public TransactionsAdapter(OnTransactionClickListener onTransactionClickListener,
+      Action1<AppcoinsApplication> applicationClickListener) {
     this.onTransactionClickListener = onTransactionClickListener;
+    this.applicationClickListener = applicationClickListener;
   }
 
   @Override public BinderViewHolder<?> onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -76,7 +80,8 @@ public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> 
       break;
       case AppcoinsApplicationListViewHolder.VIEW_TYPE:
         holder =
-            new AppcoinsApplicationListViewHolder(R.layout.item_appcoins_application_list, parent);
+            new AppcoinsApplicationListViewHolder(R.layout.item_appcoins_application_list, parent,
+                applicationClickListener);
     }
     return holder;
   }

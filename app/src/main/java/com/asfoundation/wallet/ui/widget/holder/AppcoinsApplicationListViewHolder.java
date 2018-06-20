@@ -10,13 +10,17 @@ import com.asf.wallet.R;
 import com.asfoundation.wallet.ui.appcoins.AppcoinsApplicationAdapter;
 import com.asfoundation.wallet.ui.appcoins.applications.AppcoinsApplication;
 import java.util.List;
+import rx.functions.Action1;
 
 public class AppcoinsApplicationListViewHolder extends BinderViewHolder<List<AppcoinsApplication>> {
   public static final int VIEW_TYPE = 1006;
   private final AppcoinsApplicationAdapter adapter;
+  private final Action1<AppcoinsApplication> applicationClickListener;
 
-  public AppcoinsApplicationListViewHolder(int resId, ViewGroup parent) {
+  public AppcoinsApplicationListViewHolder(int resId, ViewGroup parent,
+      Action1<AppcoinsApplication> applicationClickListener) {
     super(resId, parent);
+    this.applicationClickListener = applicationClickListener;
     RecyclerView recyclerView = findViewById(R.id.recycler_view);
     recyclerView.setLayoutManager(
         new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -25,6 +29,6 @@ public class AppcoinsApplicationListViewHolder extends BinderViewHolder<List<App
   }
 
   @Override public void bind(@Nullable List<AppcoinsApplication> data, @NonNull Bundle addition) {
-    adapter.setApplications(data);
+    adapter.setApplications(data, applicationClickListener);
   }
 }
