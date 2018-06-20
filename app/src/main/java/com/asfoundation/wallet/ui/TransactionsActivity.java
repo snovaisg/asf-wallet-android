@@ -126,6 +126,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
   }
 
   private void onApplications(List<AppcoinsApplication> appcoinsApplications) {
+    adapter.setApps(appcoinsApplications);
     Log.d(TAG,
         "onApplications() called with: appcoinsApplications = [" + appcoinsApplications + "]");
   }

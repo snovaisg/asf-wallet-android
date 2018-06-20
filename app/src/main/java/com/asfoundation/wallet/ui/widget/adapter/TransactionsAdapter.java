@@ -8,11 +8,13 @@ import com.asf.wallet.R;
 import com.asfoundation.wallet.entity.NetworkInfo;
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.transactions.Transaction;
+import com.asfoundation.wallet.ui.appcoins.applications.AppcoinsApplication;
 import com.asfoundation.wallet.ui.widget.OnTransactionClickListener;
 import com.asfoundation.wallet.ui.widget.entity.DateSortedItem;
 import com.asfoundation.wallet.ui.widget.entity.SortedItem;
 import com.asfoundation.wallet.ui.widget.entity.TimestampSortedItem;
 import com.asfoundation.wallet.ui.widget.entity.TransactionSortedItem;
+import com.asfoundation.wallet.ui.widget.holder.AppcoinsApplicationListViewHolder;
 import com.asfoundation.wallet.ui.widget.holder.BinderViewHolder;
 import com.asfoundation.wallet.ui.widget.holder.TransactionDateHolder;
 import com.asfoundation.wallet.ui.widget.holder.TransactionHolder;
@@ -71,6 +73,9 @@ public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> 
       case TransactionDateHolder.VIEW_TYPE: {
         holder = new TransactionDateHolder(R.layout.item_transactions_date_head, parent);
       }
+      break;
+      case AppcoinsApplicationListViewHolder.VIEW_TYPE:
+        holder = new AppcoinsApplicationListViewHolder(R.layout.item_appcoins_applications, parent);
     }
     return holder;
   }
@@ -114,5 +119,11 @@ public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> 
 
   public void clear() {
     items.clear();
+  }
+
+  public void setApps(List<AppcoinsApplication> apps) {
+    items.beginBatchedUpdates();
+    items.add(new ApplicationSortedItem(apps, AppcoinsApplicationListViewHolder.VIEW_TYPE));
+    items.endBatchedUpdates();
   }
 }
