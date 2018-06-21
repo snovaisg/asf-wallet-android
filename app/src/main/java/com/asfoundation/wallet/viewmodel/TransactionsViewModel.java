@@ -31,6 +31,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -127,13 +128,17 @@ public class TransactionsViewModel extends BaseViewModel {
     progress.postValue(shouldShowProgress);
     /*For specific address use: new Wallet("0x60f7a1cbc59470b74b1df20b133700ec381f15d3")*/
     Observable<List<Transaction>> fetch = fetchTransactionsInteract.fetch(defaultWallet.getValue())
-        .flatMapSingle(rawTransactions -> transactionsMapper.map(rawTransactions))
+        .flatMapSingle(transactionsMapper::map)
         .observeOn(AndroidSchedulers.mainThread());
     disposables.add(
         fetch.subscribe(this::onTransactions, this::onError, this::onTransactionsFetchCompleted));
     if (shouldShowProgress) {
       disposables.add(applications.getApps()
           .subscribeOn(Schedulers.io())
+          .map(appcoinsApplications -> {
+            Collections.shuffle(appcoinsApplications);
+            return appcoinsApplications;
+          })
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(appcoinsApplications::postValue));
     }
@@ -145,7 +150,7 @@ public class TransactionsViewModel extends BaseViewModel {
           defaultWalletBalance.postValue(values);
           handler.removeCallbacks(startGetBalanceTask);
           handler.postDelayed(startGetBalanceTask, GET_BALANCE_INTERVAL);
-        }, throwable -> throwable.printStackTrace()));
+        }, Throwable::printStackTrace));
   }
 
   private void onDefaultNetwork(NetworkInfo networkInfo) {
