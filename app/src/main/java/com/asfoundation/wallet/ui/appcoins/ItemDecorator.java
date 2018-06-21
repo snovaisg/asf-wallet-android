@@ -13,14 +13,32 @@ public class ItemDecorator extends RecyclerView.ItemDecoration {
 
   @Override public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
       RecyclerView.State state) {
+
     if (parent.getChildAdapterPosition(view) == 0) {
-      outRect.left = spaceInDp;
-      outRect.bottom = 0;
+      if (isRtl(view)) {
+        outRect.right = spaceInDp;
+        outRect.left = 0;
+      } else {
+        outRect.right = 0;
+        outRect.left = spaceInDp;
+      }
     }
 
     if (parent.getChildAdapterPosition(view) == state.getItemCount() - 1) {
-      outRect.right = spaceInDp;
-      outRect.top = 0; //don't forget about recycling...
+      if (isRtl(view)) {
+        outRect.right = 0;
+        outRect.left = spaceInDp;
+      } else {
+        outRect.right = spaceInDp;
+        outRect.left = 0; //don't forget about recycling...
+      }
     }
+  }
+
+  private boolean isRtl(View view) {
+    return view.getContext()
+        .getResources()
+        .getConfiguration()
+        .getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
   }
 }
