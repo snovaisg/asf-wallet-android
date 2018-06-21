@@ -5,9 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import com.asf.wallet.R;
 import com.asfoundation.wallet.ui.appcoins.AppcoinsApplicationAdapter;
+import com.asfoundation.wallet.ui.appcoins.ItemDecorator;
 import com.asfoundation.wallet.ui.appcoins.applications.AppcoinsApplication;
 import java.util.List;
 import rx.functions.Action1;
@@ -20,6 +22,10 @@ public class AppcoinsApplicationListViewHolder extends BinderViewHolder<List<App
       Action1<AppcoinsApplication> applicationClickListener) {
     super(resId, parent);
     RecyclerView recyclerView = findViewById(R.id.recycler_view);
+    int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+        getContext().getResources()
+            .getDisplayMetrics());
+    recyclerView.addItemDecoration(new ItemDecorator(space));
     recyclerView.setLayoutManager(
         new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     adapter = new AppcoinsApplicationAdapter(applicationClickListener);
