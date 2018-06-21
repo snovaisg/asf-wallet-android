@@ -14,7 +14,7 @@ public class AppsHookTest {
 
   @Before public void setUp() {
     appsList = new ArrayList<>();
-    appsList.add(new App("name", 5.0, "icon"));
+    appsList.add(new App("name", 5.0, "icon", "featured Graphic"));
     appsHook = new Applications(() -> Single.just(appsList));
   }
 

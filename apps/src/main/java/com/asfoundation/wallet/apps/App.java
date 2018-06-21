@@ -4,11 +4,13 @@ public class App {
   private final String name;
   private final double rating;
   private final String iconUrl;
+  private final String featuredGraphic;
 
-  public App(String name, double rating, String iconUrl) {
+  public App(String name, double rating, String iconUrl, String featuredGraphic) {
     this.name = name;
     this.rating = rating;
     this.iconUrl = iconUrl;
+    this.featuredGraphic = featuredGraphic;
   }
 
   public String getName() {
@@ -38,5 +40,9 @@ public class App {
 
   public String getIconUrl() {
     return iconUrl;
+  }
+
+  public String getFeaturedGraphic() {
+    return featuredGraphic;
   }
 }

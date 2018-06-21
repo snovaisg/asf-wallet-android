@@ -23,7 +23,8 @@ public class AppcoinsApps {
     ArrayList<AppcoinsApplication> appcoinsApplications = new ArrayList<>();
     for (App app : apps) {
       appcoinsApplications.add(
-          new AppcoinsApplication(app.getName(), app.getRating(), app.getIconUrl()));
+          new AppcoinsApplication(app.getName(), app.getRating(), app.getIconUrl(),
+              app.getFeaturedGraphic()));
     }
     return appcoinsApplications;
   }

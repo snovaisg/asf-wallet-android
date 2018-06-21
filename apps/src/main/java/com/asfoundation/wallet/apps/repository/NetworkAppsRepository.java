@@ -26,7 +26,7 @@ public class NetworkAppsRepository implements Repository {
         .getList()) {
       apps.add(new App(application.getName(), application.getStats()
           .getPrating()
-          .getAvg(), application.getIcon()));
+          .getAvg(), application.getIcon(), application.getGraphic()));
     }
     return apps;
   }
