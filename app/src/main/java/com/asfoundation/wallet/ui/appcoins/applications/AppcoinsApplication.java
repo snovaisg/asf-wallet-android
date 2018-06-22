@@ -14,6 +14,29 @@ public class AppcoinsApplication {
     this.featuredGraphic = featuredGraphic;
   }
 
+  @Override public int hashCode() {
+    int result;
+    long temp;
+    result = name.hashCode();
+    temp = Double.doubleToLongBits(rating);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    result = 31 * result + iconUrl.hashCode();
+    result = 31 * result + featuredGraphic.hashCode();
+    return result;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof AppcoinsApplication)) return false;
+
+    AppcoinsApplication that = (AppcoinsApplication) o;
+
+    if (Double.compare(that.rating, rating) != 0) return false;
+    if (!name.equals(that.name)) return false;
+    if (!iconUrl.equals(that.iconUrl)) return false;
+    return featuredGraphic.equals(that.featuredGraphic);
+  }
+
   @Override public String toString() {
     return "AppcoinsApplication{"
         + "name='"

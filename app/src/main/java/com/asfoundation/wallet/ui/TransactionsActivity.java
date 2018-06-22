@@ -16,7 +16,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -132,8 +131,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
 
   private void onApplications(List<AppcoinsApplication> appcoinsApplications) {
     adapter.setApps(appcoinsApplications);
-    Log.d(TAG,
-        "onApplications() called with: appcoinsApplications = [" + appcoinsApplications + "]");
+    showList();
   }
 
   private void onBalanceChanged(Map<String, String> balance) {
@@ -221,8 +219,14 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
 
   private void onTransactions(List<Transaction> transaction) {
     adapter.addTransactions(transaction);
-    list.setVisibility(View.VISIBLE);
+    showList();
     invalidateOptionsMenu();
+  }
+
+  private void showList() {
+    if (adapter.getItemCount() > 1) {
+      list.setVisibility(View.VISIBLE);
+    }
   }
 
   private void onDefaultWallet(Wallet wallet) {

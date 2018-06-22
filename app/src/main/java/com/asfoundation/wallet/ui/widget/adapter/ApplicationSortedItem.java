@@ -14,10 +14,10 @@ class ApplicationSortedItem extends SortedItem<List<AppcoinsApplication>> {
   }
 
   @Override public boolean areContentsTheSame(SortedItem newItem) {
-    return false;
+    return viewType == newItem.viewType && value.equals(newItem.value);
   }
 
   @Override public boolean areItemsTheSame(SortedItem other) {
-    return false;
+    return viewType == other.viewType;
   }
 }
