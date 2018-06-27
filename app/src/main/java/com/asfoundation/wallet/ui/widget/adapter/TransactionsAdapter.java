@@ -128,8 +128,6 @@ public class TransactionsAdapter extends RecyclerView.Adapter<BinderViewHolder> 
   }
 
   public void setApps(List<AppcoinsApplication> apps) {
-    items.beginBatchedUpdates();
     items.add(new ApplicationSortedItem(apps, AppcoinsApplicationListViewHolder.VIEW_TYPE));
-    items.endBatchedUpdates();
   }
 }
