@@ -5,12 +5,15 @@ public class App {
   private final double rating;
   private final String iconUrl;
   private final String featuredGraphic;
+  private final String packageName;
 
-  public App(String name, double rating, String iconUrl, String featuredGraphic) {
+  public App(String name, double rating, String iconUrl, String featuredGraphic,
+      String packageName) {
     this.name = name;
     this.rating = rating;
     this.iconUrl = iconUrl;
     this.featuredGraphic = featuredGraphic;
+    this.packageName = packageName;
   }
 
   public String getName() {
@@ -18,7 +21,15 @@ public class App {
   }
 
   @Override public int hashCode() {
-    return name.hashCode();
+    int result;
+    long temp;
+    result = name.hashCode();
+    temp = Double.doubleToLongBits(rating);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    result = 31 * result + iconUrl.hashCode();
+    result = 31 * result + featuredGraphic.hashCode();
+    result = 31 * result + packageName.hashCode();
+    return result;
   }
 
   @Override public boolean equals(Object o) {
@@ -27,7 +38,11 @@ public class App {
 
     App app = (App) o;
 
-    return name.equals(app.name);
+    if (Double.compare(app.rating, rating) != 0) return false;
+    if (!name.equals(app.name)) return false;
+    if (!iconUrl.equals(app.iconUrl)) return false;
+    if (!featuredGraphic.equals(app.featuredGraphic)) return false;
+    return packageName.equals(app.packageName);
   }
 
   @Override public String toString() {
@@ -44,5 +59,9 @@ public class App {
 
   public String getFeaturedGraphic() {
     return featuredGraphic;
+  }
+
+  public String getPackageName() {
+    return packageName;
   }
 }

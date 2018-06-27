@@ -6,12 +6,15 @@ public class AppcoinsApplication {
   private final double rating;
   private final String iconUrl;
   private final String featuredGraphic;
+  private final String packageName;
 
-  public AppcoinsApplication(String name, double rating, String iconUrl, String featuredGraphic) {
+  public AppcoinsApplication(String name, double rating, String iconUrl, String featuredGraphic,
+      String packageName) {
     this.name = name;
     this.rating = rating;
     this.iconUrl = iconUrl;
     this.featuredGraphic = featuredGraphic;
+    this.packageName = packageName;
   }
 
   @Override public int hashCode() {
@@ -34,7 +37,8 @@ public class AppcoinsApplication {
     if (Double.compare(that.rating, rating) != 0) return false;
     if (!name.equals(that.name)) return false;
     if (!iconUrl.equals(that.iconUrl)) return false;
-    return featuredGraphic.equals(that.featuredGraphic);
+    if (!featuredGraphic.equals(that.featuredGraphic)) return false;
+    return packageName.equals(that.packageName);
   }
 
   @Override public String toString() {
@@ -64,5 +68,9 @@ public class AppcoinsApplication {
 
   public String getFeaturedGraphic() {
     return featuredGraphic;
+  }
+
+  public String getPackageName() {
+    return packageName;
   }
 }

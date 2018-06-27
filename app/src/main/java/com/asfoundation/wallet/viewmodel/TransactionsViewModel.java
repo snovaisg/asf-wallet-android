@@ -230,7 +230,8 @@ public class TransactionsViewModel extends BaseViewModel {
   }
 
   public void onAppClick(AppcoinsApplication appcoinsApplication, Context context) {
-    externalBrowserRouter.open(context,
-        Uri.parse("https://www.appstorefoundation.org/offer-wall#spendAppCoinsList"));
+    externalBrowserRouter.open(context, Uri.parse(
+        "https://www.appstorefoundation.org/offer-wall#spendAppCoinsList-"
+            + appcoinsApplication.getPackageName()));
   }
 }
