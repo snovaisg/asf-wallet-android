@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewGroup;
 import com.asf.wallet.R;
 import com.asfoundation.wallet.ui.appcoins.AppcoinsApplicationAdapter;
@@ -17,11 +18,14 @@ import rx.functions.Action1;
 public class AppcoinsApplicationListViewHolder extends BinderViewHolder<List<AppcoinsApplication>> {
   public static final int VIEW_TYPE = 1006;
   private final AppcoinsApplicationAdapter adapter;
+  private final RecyclerView recyclerView;
+  private final View title;
 
   public AppcoinsApplicationListViewHolder(int resId, ViewGroup parent,
       Action1<AppcoinsApplication> applicationClickListener) {
     super(resId, parent);
-    RecyclerView recyclerView = findViewById(R.id.recycler_view);
+    recyclerView = findViewById(R.id.recycler_view);
+    title = findViewById(R.id.title);
     int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
         getContext().getResources()
             .getDisplayMetrics());
@@ -33,6 +37,13 @@ public class AppcoinsApplicationListViewHolder extends BinderViewHolder<List<App
   }
 
   @Override public void bind(@Nullable List<AppcoinsApplication> data, @NonNull Bundle addition) {
-    adapter.setApplications(data);
+    if (data.isEmpty()) {
+      recyclerView.setVisibility(View.GONE);
+      title.setVisibility(View.GONE);
+    } else {
+      adapter.setApplications(data);
+      title.setVisibility(View.VISIBLE);
+      recyclerView.setVisibility(View.VISIBLE);
+    }
   }
 }
