@@ -7,5 +7,6 @@ import retrofit2.http.GET;
 public interface AppsApi {
   String API_BASE_URL = "https://ws75.aptoide.com/api/7/";
 
-  @GET("listApps/store_name=asf-store/group_name=group-10609") Single<Application> getApps();
+  @GET("listApps/store_name=asf-store/group_name=group-10609/order=rand/limit=10")
+  Single<Application> getApps();
 }
