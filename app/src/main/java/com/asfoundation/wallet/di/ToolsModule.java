@@ -2,12 +2,18 @@ package com.asfoundation.wallet.di;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import com.asf.appcoins.sdk.contractproxy.AppCoinsAddressProxyBuilder;
+import com.asf.appcoins.sdk.contractproxy.AppCoinsAddressProxySdk;
+import com.asf.appcoins.sdk.contractproxy.ContractAddressProvider;
+import com.asf.appcoins.sdk.contractproxy.proxy.WalletAddressProvider;
+import com.asf.appcoins.sdk.contractproxy.proxy.Web3jProxyContract;
 import com.asf.wallet.BuildConfig;
 import com.asfoundation.wallet.Airdrop;
 import com.asfoundation.wallet.AirdropService;
 import com.asfoundation.wallet.App;
 import com.asfoundation.wallet.FabricLogger;
 import com.asfoundation.wallet.Logger;
+import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.interact.AddTokenInteract;
 import com.asfoundation.wallet.interact.BuildConfigDefaultTokenProvider;
 import com.asfoundation.wallet.interact.DefaultTokenProvider;
@@ -17,8 +23,6 @@ import com.asfoundation.wallet.interact.FindDefaultNetworkInteract;
 import com.asfoundation.wallet.interact.FindDefaultWalletInteract;
 import com.asfoundation.wallet.interact.GetDefaultWalletBalance;
 import com.asfoundation.wallet.interact.SendTransactionInteract;
-import com.asfoundation.contractproxy.proxy.ContractAddressProvider;
-import com.asfoundation.contractproxy.proxy.Web3jProxyContract;
 import com.asfoundation.wallet.poa.BlockchainErrorMapper;
 import com.asfoundation.wallet.poa.Calculator;
 import com.asfoundation.wallet.poa.DataMapper;
@@ -68,6 +72,7 @@ import com.asfoundation.wallet.util.TransferParser;
 import com.google.gson.Gson;
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -236,7 +241,7 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
   @Singleton @Provides TransactionFactory provideTransactionFactory(Web3jProvider web3jProvider,
       WalletRepositoryType walletRepository, AccountKeystoreService accountKeystoreService,
       PasswordStore passwordStore, EthereumNetworkRepositoryType ethereumNetworkRepository,
-      DataMapper dataMapper, ContractAddressProvider adsContractAddressProvider) {
+      DataMapper dataMapper, AppCoinsAddressProxySdk adsContractAddressProvider) {
     return new TransactionFactory(web3jProvider, walletRepository, accountKeystoreService,
         passwordStore, ethereumNetworkRepository, dataMapper, adsContractAddressProvider);
   }
@@ -251,17 +256,10 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
         defaultWalletInteract, gasSettingsRepository, registerPoaGasLimit, ethereumNetwork);
   }
 
-  @Singleton @Provides ContractAddressProvider provideAdsContractAddressProvider(
+  @Singleton @Provides AppCoinsAddressProxySdk provideAdsContractAddressSdk(
       Web3jProvider web3jProvider, FindDefaultWalletInteract findDefaultWalletInteract) {
-    return new ContractAddressProvider(() -> findDefaultWalletInteract.find()
-        .map(wallet -> wallet.address), new Web3jProxyContract(web3jProvider::get, chainId -> {
-      switch (chainId) {
-        case 3:
-          return BuildConfig.ROPSTEN_NETWORK_PROXY_CONTRACT_ADDRESS;
-        default:
-          return BuildConfig.MAIN_NETWORK_PROXY_CONTRACT_ADDRESS;
-      }
-    }), Schedulers.io(), new ConcurrentHashMap<>());
+    return new AppCoinsAddressProxyBuilder().createAddressProxySdk(() -> findDefaultWalletInteract.find()
+        .map(wallet -> wallet.address), web3jProvider::get);
   }
 
   @Singleton @Provides HashCalculator provideHashCalculator(Calculator calculator) {

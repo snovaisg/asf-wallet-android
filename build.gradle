@@ -28,6 +28,7 @@ allprojects {
     maven {
       url "https://github.com/omadahealth/omada-nexus/raw/master/release"
     }
+    maven { url "https://dl.bintray.com/asf/asf" }
   }
 }
 project.ext {
@@ -46,6 +47,7 @@ project.ext {
   junitVersion = "4.12"
   mockitoCoreVersion = "2.15.0"
   roomVersion = "1.1.0"
+  appcoinsSdkVersion = "0.3.7a"
 }
 
 task clean(type: Delete) {
