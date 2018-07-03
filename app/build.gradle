@@ -203,7 +203,7 @@ dependencies {
   //    }
   implementation project(path: ':airdrop')
   implementation project(path: ':ContractProxy')
-  implementation project(path: ':apps')
+  implementation project(path: ':applications')
 }
 
 def renameArtifact(defaultConfig) {
