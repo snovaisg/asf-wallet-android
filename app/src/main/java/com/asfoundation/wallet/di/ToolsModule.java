@@ -11,7 +11,7 @@ import com.asfoundation.wallet.App;
 import com.asfoundation.wallet.FabricLogger;
 import com.asfoundation.wallet.Logger;
 import com.asfoundation.wallet.apps.Applications;
-import com.asfoundation.wallet.apps.AppsApi;
+import com.asfoundation.wallet.apps.ApplicationsApi;
 import com.asfoundation.wallet.interact.AddTokenInteract;
 import com.asfoundation.wallet.interact.BuildConfigDefaultTokenProvider;
 import com.asfoundation.wallet.interact.DefaultTokenProvider;
@@ -342,12 +342,12 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
   }
 
   @Singleton @Provides AppcoinsApps provideAppcoinsApps(OkHttpClient client, Gson gson) {
-    AppsApi appsApi = new Retrofit.Builder().baseUrl(AppsApi.API_BASE_URL)
+    ApplicationsApi appsApi = new Retrofit.Builder().baseUrl(ApplicationsApi.API_BASE_URL)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
-        .create(AppsApi.class);
+        .create(ApplicationsApi.class);
     return new AppcoinsApps(new Applications.Builder().setApi(appsApi)
         .build());
   }

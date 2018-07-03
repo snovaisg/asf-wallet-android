@@ -10,16 +10,16 @@ import org.junit.Test;
 public class AppsHookTest {
 
   private Applications appsHook;
-  private List<App> appsList;
+  private List<Application> appsList;
 
   @Before public void setUp() {
     appsList = new ArrayList<>();
-    appsList.add(new App("name", 5.0, "icon", "featured Graphic", "package_name"));
+    appsList.add(new Application("name", 5.0, "icon", "featured Graphic", "package_name"));
     appsHook = new Applications(() -> Single.just(appsList));
   }
 
   @Test public void getApps() {
-    TestObserver<List<App>> subscriber = new TestObserver<>();
+    TestObserver<List<Application>> subscriber = new TestObserver<>();
     appsHook.getApps()
         .subscribe(subscriber);
     subscriber.assertValue(appsList);

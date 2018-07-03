@@ -12,20 +12,20 @@ public class Applications {
     this.appsService = appsService;
   }
 
-  public Single<List<App>> getApps() {
+  public Single<List<Application>> getApps() {
     return appsService.getApps();
   }
 
   public static class Builder {
     private Repository repository;
-    private AppsApi api;
+    private ApplicationsApi api;
 
     public Builder setRepository(Repository repository) {
       this.repository = repository;
       return this;
     }
 
-    public Builder setApi(AppsApi api) {
+    public Builder setApi(ApplicationsApi api) {
       this.api = api;
       return this;
     }

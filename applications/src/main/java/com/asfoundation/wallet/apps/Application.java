@@ -1,13 +1,13 @@
 package com.asfoundation.wallet.apps;
 
-public class App {
+public class Application {
   private final String name;
   private final double rating;
   private final String iconUrl;
   private final String featuredGraphic;
   private final String packageName;
 
-  public App(String name, double rating, String iconUrl, String featuredGraphic,
+  public Application(String name, double rating, String iconUrl, String featuredGraphic,
       String packageName) {
     this.name = name;
     this.rating = rating;
@@ -34,9 +34,9 @@ public class App {
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof App)) return false;
+    if (!(o instanceof Application)) return false;
 
-    App app = (App) o;
+    Application app = (Application) o;
 
     if (Double.compare(app.rating, rating) != 0) return false;
     if (!name.equals(app.name)) return false;
