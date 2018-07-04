@@ -17,7 +17,7 @@ import com.asfoundation.wallet.router.SendRouter;
 import com.asfoundation.wallet.router.SettingsRouter;
 import com.asfoundation.wallet.router.TransactionDetailRouter;
 import com.asfoundation.wallet.transactions.TransactionsMapper;
-import com.asfoundation.wallet.ui.iab.AppcoinsOperationsDataSaver;
+import com.asfoundation.wallet.ui.AppcoinsApps;
 
 public class TransactionsViewModelFactory implements ViewModelProvider.Factory {
 
@@ -35,7 +35,7 @@ public class TransactionsViewModelFactory implements ViewModelProvider.Factory {
   private final GetDefaultWalletBalance getDefaultWalletBalance;
   private final TransactionsMapper transactionsMapper;
   private final AirdropRouter airdropRouter;
-  private final AppcoinsOperationsDataSaver operationsDataSaver;
+  private final AppcoinsApps applications;
 
   public TransactionsViewModelFactory(FindDefaultNetworkInteract findDefaultNetworkInteract,
       FindDefaultWalletInteract findDefaultWalletInteract,
@@ -45,7 +45,7 @@ public class TransactionsViewModelFactory implements ViewModelProvider.Factory {
       MyTokensRouter myTokensRouter, ExternalBrowserRouter externalBrowserRouter,
       DefaultTokenProvider defaultTokenProvider, GetDefaultWalletBalance getDefaultWalletBalance,
       TransactionsMapper transactionsMapper, AirdropRouter airdropRouter,
-      AppcoinsOperationsDataSaver operationsDataSaver) {
+      AppcoinsApps applications) {
     this.findDefaultNetworkInteract = findDefaultNetworkInteract;
     this.findDefaultWalletInteract = findDefaultWalletInteract;
     this.fetchTransactionsInteract = fetchTransactionsInteract;
@@ -60,7 +60,7 @@ public class TransactionsViewModelFactory implements ViewModelProvider.Factory {
     this.getDefaultWalletBalance = getDefaultWalletBalance;
     this.transactionsMapper = transactionsMapper;
     this.airdropRouter = airdropRouter;
-    this.operationsDataSaver = operationsDataSaver;
+    this.applications = applications;
   }
 
   @NonNull @Override public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
@@ -68,6 +68,6 @@ public class TransactionsViewModelFactory implements ViewModelProvider.Factory {
         fetchTransactionsInteract, manageWalletsRouter, settingsRouter, sendRouter,
         transactionDetailRouter, myAddressRouter, myTokensRouter, externalBrowserRouter,
         defaultTokenProvider, getDefaultWalletBalance, transactionsMapper, airdropRouter,
-        operationsDataSaver);
+        applications);
   }
 }
