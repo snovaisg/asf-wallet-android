@@ -106,7 +106,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
         .observe(this, this::onDefaultWallet);
     viewModel.transactions()
         .observe(this, this::onTransactions);
-    viewModel.Applications()
+    viewModel.applications()
         .observe(this, this::onApplications);
     refreshLayout.setOnRefreshListener(() -> viewModel.fetchTransactions(true));
   }
@@ -224,6 +224,8 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
   }
 
   private void showList() {
+    // the value is 1 because apps list item is always added, so if there is at least 1
+    // transaction, the list is shown
     if (adapter.getItemCount() > 1) {
       list.setVisibility(View.VISIBLE);
     }

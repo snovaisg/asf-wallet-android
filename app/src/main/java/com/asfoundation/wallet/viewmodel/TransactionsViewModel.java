@@ -140,6 +140,7 @@ public class TransactionsViewModel extends BaseViewModel {
             return appcoinsApplications;
           })
           .observeOn(AndroidSchedulers.mainThread())
+          .doOnSubscribe(disposable -> appcoinsApplications.postValue(Collections.emptyList()))
           .subscribe(appcoinsApplications::postValue, Throwable::printStackTrace));
     }
   }
@@ -225,7 +226,7 @@ public class TransactionsViewModel extends BaseViewModel {
     openDeposit(context, uri);
   }
 
-  public LiveData<List<AppcoinsApplication>> Applications() {
+  public LiveData<List<AppcoinsApplication>> applications() {
     return appcoinsApplications;
   }
 
