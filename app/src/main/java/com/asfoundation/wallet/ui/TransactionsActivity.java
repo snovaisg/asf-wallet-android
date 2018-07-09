@@ -126,7 +126,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
   }
 
   private void onApplicationClick(AppcoinsApplication appcoinsApplication) {
-    viewModel.onAppClick(appcoinsApplication, getBaseContext());
+    viewModel.onAppClick(appcoinsApplication, this);
   }
 
   private void onApplications(List<AppcoinsApplication> appcoinsApplications) {
