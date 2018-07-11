@@ -68,7 +68,7 @@ public class App extends MultiDexApplication
               }
             })
             .retry()
-            .subscribe());
+            .subscribe())
   }
 
   private void setupRxJava() {
