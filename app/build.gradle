@@ -206,7 +206,7 @@ def renameArtifact(defaultConfig) {
   android.applicationVariants.all { variant ->
     variant.outputs.all {
       def formattedDate = new Date().format('yyMMdd-HHmm')
-      def fileName = "ASF_Wallet_V${defaultConfig.versionCode}_${formattedDate}_${variant.name}"
+      def fileName = "ASF_Wallet_v${defaultConfig.versionCode}_${defaultConfig.versionName}_${formattedDate}_${variant.name}"
       outputFileName = new File("${fileName}.apk")
     }
   }
