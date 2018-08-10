@@ -3,6 +3,7 @@ package com.asfoundation.wallet.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.asfoundation.wallet.entity.NetworkInfo;
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.interact.AddTokenInteract;
 import com.asfoundation.wallet.poa.TransactionFactory;
+import com.asfoundation.wallet.tokenswap.swap_activity;
 import com.asfoundation.wallet.transactions.Transaction;
 import com.asfoundation.wallet.ui.appcoins.applications.AppcoinsApplication;
 import com.asfoundation.wallet.ui.toolbar.ToolbarArcBackground;
@@ -186,7 +188,9 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
         break;
       }
       case R.id.action_air_drop: {
-        viewModel.showAirDrop(this);
+        //viewModel.showAirDrop(this);
+        Intent intent = new Intent(this, swap_activity.class);
+        startActivity(intent);
         break;
       }
       case R.id.action_learn_more:
