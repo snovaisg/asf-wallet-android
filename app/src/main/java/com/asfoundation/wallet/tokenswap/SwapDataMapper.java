@@ -24,4 +24,16 @@ public class SwapDataMapper {
     String encodedFunction = FunctionEncoder.encode(function);
     return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
   }
+
+  public Function getDataExpectedRate(SwapProof swapProof) {
+    Address srcToken = new Address(swapProof.getSrcToken());
+    Address destToken = new Address(swapProof.getDestToken());
+    Uint srcQnty = new Uint(swapProof.getAmount()
+        .toBigInteger());
+    List<Type> params = Arrays.asList(srcToken, destToken, srcQnty);
+    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Uint>() {
+    });
+    Function getRates = new Function("getExpectedRate", params, returnTypes);
+    return getRates;
+  }
 }

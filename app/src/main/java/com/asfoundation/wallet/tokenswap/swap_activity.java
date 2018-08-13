@@ -10,16 +10,17 @@ import android.widget.TextView;
 import com.asf.wallet.R;
 import dagger.android.AndroidInjection;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.inject.Inject;
 import org.web3j.utils.Convert;
 
 public class swap_activity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-  private static final String TAG = "swap_activity";
   public SwapDataMapper swapDataMapper;
   @Inject SwapProofWriter swapBlockChainWriter;
   @Inject SwapProof swapProof;
   Spinner toToken;
+  String coinSelected;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
 
@@ -78,6 +79,7 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
     String tokenAddress = "";
     String a = parent.getItemAtPosition(pos)
         .toString();
+    coinSelected = a;
     switch (a) {
       case "KNC":
         tokenAddress = getString(R.string.RopstenKNC);
@@ -95,6 +97,19 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
 
   public void onNothingSelected(AdapterView<?> parent) {
     // Another interface callback
+  }
+
+  public void getExpectedRate(View v) {
+    String srcToken = swapProof.getDestToken();
+    String destToken = getString(R.string.RopstenAppCoins); // hack RopstenAPPC
+    swapProof.setSrcToken(srcToken);
+    swapProof.setDestToken(destToken);
+    String number = "1";
+    swapProof.setAmount(Convert.toWei(number, Convert.Unit.ETHER));
+    BigInteger rateWei = swapBlockChainWriter.writeGetterSwapProof(swapProof);
+    String rateWeiStr = rateWei.toString();
+    BigDecimal rate = Convert.fromWei(rateWeiStr, Convert.Unit.ETHER);
+    setText("1 " + coinSelected + " = " + rate.toString() + " APPC");
   }
 }
 

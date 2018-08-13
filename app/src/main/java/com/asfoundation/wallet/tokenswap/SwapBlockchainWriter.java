@@ -7,8 +7,23 @@ import com.asfoundation.wallet.repository.Web3jProvider;
 import io.reactivex.Single;
 import io.reactivex.annotations.Nullable;
 import io.reactivex.functions.Consumer;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Uint;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.Response;
+import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.utils.Numeric;
+
+import static org.web3j.protocol.core.methods.request.Transaction.createEthCallTransaction;
 
 public class SwapBlockchainWriter implements SwapProofWriter {
 
@@ -42,6 +57,35 @@ public class SwapBlockchainWriter implements SwapProofWriter {
     this.resL = listener;
   }
 
+  @Override public BigInteger writeGetterSwapProof(SwapProof swapProof) {
+    String from = swapProof.getFromAddress();
+    String to = swapProof.getToAddress();
+    Function getRates = new SwapDataMapper().getDataExpectedRate(swapProof);
+    String encodedFunction = FunctionEncoder.encode(getRates);
+    Transaction ethCallTransaction = createEthCallTransaction(from, to, encodedFunction);
+    try {
+      Future<EthCall> rawResponse = web3jProvider.get(swapProof.getChainId())
+          .ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST)
+          .sendAsync();
+      while (!rawResponse.isDone()) {
+      }
+      if (!rawResponse.get()
+          .hasError()) {
+        List<Type> response = FunctionReturnDecoder.decode(rawResponse.get()
+            .getValue(), getRates.getOutputParameters());
+        return ((Uint) response.get(0)).getValue();
+      } else {
+        throw new RuntimeException(mapErrorToMessage(rawResponse.get()
+            .getError()));
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (ExecutionException e) {
+      e.printStackTrace();
+    }
+    return BigInteger.ZERO;
+  }
+
   private Single<String> sendTransaction(byte[] transaction) {
     return Single.fromCallable(() -> {
       EthSendTransaction sentTransaction = web3jProvider.getDefault()
@@ -55,5 +99,14 @@ public class SwapBlockchainWriter implements SwapProofWriter {
       }
       return sentTransaction.getResult();
     });
+  }
+
+  private String mapErrorToMessage(Response.Error error) {
+    return "Code: "
+        + error.getCode()
+        + "\nmessage: "
+        + error.getMessage()
+        + "\nData: "
+        + error.getData();
   }
 }
