@@ -7,6 +7,8 @@ public class SwapProof {
 
   private int chainId;
   private BigDecimal gasPrice;
+  private BigDecimal tokenAmount;
+  private String allowAddress;
   private BigDecimal gasLimit;
   private BigDecimal amount;
   private String fromAddress;
@@ -17,13 +19,16 @@ public class SwapProof {
   private byte[] data;
 
   public SwapProof(int chainId, GasSettingsRepositoryType gasSettingsRepositoryType,
-      BigDecimal amount, String fromAddress, String toAddress, String srcToken, String destToken,
-      Float minConversionRate, String data) {
+      BigDecimal amount, BigDecimal tokenAmount, String fromAddress, String toAddress,
+      String srcToken, String destToken, String allowAddress, Float minConversionRate,
+      String data) {
 
     this.chainId = chainId;
     this.gasPrice = gasSettingsRepositoryType.getGasSettings(false)
         .blockingGet().gasPrice.multiply(BigDecimal.TEN)
         .multiply(BigDecimal.TEN);
+    this.tokenAmount = tokenAmount;
+    this.allowAddress = allowAddress;
     this.gasLimit = BigDecimal.valueOf(250000);
     this.amount = amount;
     this.fromAddress = fromAddress;
@@ -32,6 +37,14 @@ public class SwapProof {
     this.destToken = destToken;
     this.minConversionRate = minConversionRate;
     this.data = data.getBytes();
+  }
+
+  public BigDecimal getTokenAmount() {
+    return tokenAmount;
+  }
+
+  public void setTokenAmount(BigDecimal tokenAmount) {
+    this.tokenAmount = tokenAmount;
   }
 
   public Float getMinConversionRate() {
@@ -100,5 +113,13 @@ public class SwapProof {
 
   public void setAmount(BigDecimal amount) {
     this.amount = amount;
+  }
+
+  public String getAllowAddress() {
+    return allowAddress;
+  }
+
+  public void setAllowAddress(String allowAddress) {
+    this.allowAddress = allowAddress;
   }
 }

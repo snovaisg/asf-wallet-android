@@ -1,7 +1,6 @@
 package com.asfoundation.wallet.tokenswap;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import com.asfoundation.wallet.repository.TransactionException;
 import com.asfoundation.wallet.repository.Web3jProvider;
 import io.reactivex.Single;
@@ -43,8 +42,6 @@ public class SwapBlockchainWriter implements SwapProofWriter {
         .subscribe(new Consumer<Object>() {
           @Override public void accept(Object result) {
             resL.onResponse(result.toString());
-            Log.d("swapLog", "class = " + resL.getClass()
-                .toString());
           }
         }, new Consumer<Throwable>() {
           @Override public void accept(Throwable error) {

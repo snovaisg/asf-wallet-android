@@ -364,9 +364,10 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
 
   @Singleton @Provides SwapProof provideSwapProof(
       GasSettingsRepositoryType gasSettingsRepositoryType) {
-    return new SwapProof(3, gasSettingsRepositoryType, BigDecimal.valueOf(1000),
+    return new SwapProof(3, gasSettingsRepositoryType, BigDecimal.ZERO, BigDecimal.ZERO,
         "0x9dc8f43a6321f5f85a41ee042da2a2263c15b717", "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
         "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "0x2799f05B55d56be756Ca01Af40Bf7350787F48d4",
+        "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
         (float) 0, "hello world"); // <----- amount = 1k wei
     // <----- chain = 3 (ropsten)
   }

@@ -32,7 +32,7 @@
   <string name="KovanWhiteList">0x40B4C521d52E744E0fB6DaEF72BE37D4E99E2D2A</string>
 
 
-  <!-- KyberNetwork  Token Addresses -->
+  <!-- Token Addresses -->
   <string name="MainNetEther">0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</string>
   <string name="RopstenEther">0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</string>
 
@@ -69,6 +69,7 @@
 
   @array/tokensAvailableForSwap
   <string-array name="tokensAvailableForSwap">
+    <item>ETHER</item>
     <item>APPC</item>
     <item>KNC</item>
     <item>EOS</item>

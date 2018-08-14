@@ -19,8 +19,10 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
   public SwapDataMapper swapDataMapper;
   @Inject SwapProofWriter swapBlockChainWriter;
   @Inject SwapProof swapProof;
+  Spinner fromToken;
   Spinner toToken;
   String coinSelected;
+  ResponseListener<String> showTxHash;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
 
@@ -29,10 +31,12 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
     AndroidInjection.inject(this);
     swapDataMapper = new SwapDataMapper();
 
+    fromToken = findViewById(R.id.spinnerFrom);
+    fromToken.setOnItemSelectedListener(this);
     toToken = findViewById(R.id.spinnerTo);
     toToken.setOnItemSelectedListener(this);
 
-    swapBlockChainWriter.setListener(new ResponseListener<String>() {
+    showTxHash = new ResponseListener<String>() {
       @Override public void onResponse(String txHash) {
         runOnUiThread(new Runnable() {
           @Override public void run() {
@@ -44,7 +48,7 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
       @Override public void onError(Throwable error) {
         error.printStackTrace();
       }
-    });
+    };
   }
 
   public void setText(String text) {
@@ -56,17 +60,21 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
     swapBlockChainWriter.writeSwapProof(swapProof);
   }
 
-  public void testSwap(View view) {
+  public void testApprove(View view) {
+    swapBlockChainWriter.setListener(showTxHash);
 
-    String amountEth;
     TextView tvAmount = findViewById(R.id.et1);
-    amountEth = tvAmount.getText()
+    String amountEth = tvAmount.getText()
         .toString();
-    try {
-      BigDecimal amountWei = Convert.toWei(amountEth, Convert.Unit.ETHER);
-      swapProof.setAmount(amountWei);
 
-      swapProof.setData(swapDataMapper.getDataSwapEtherToToken(swapProof));
+    try {
+      swapProof.setAmount(BigDecimal.ZERO);
+      swapProof.setToAddress(swapProof.getSrcToken());//hack remove
+      BigDecimal amountWei = Convert.toWei(amountEth, Convert.Unit.ETHER);
+      Log.d("swapLog3", "amountWei = " + amountWei.toString());
+      swapProof.setTokenAmount(amountWei);
+      swapProof.setAmount(BigDecimal.ZERO);
+      swapProof.setData(swapDataMapper.getDataApprove(swapProof));
       swapBlockChainWriter.writeSwapProof(swapProof);
     } catch (Exception e) {
       Log.d("swapErr", e.toString());
@@ -90,9 +98,15 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
       case "EOS":
         tokenAddress = getString(R.string.RopstenEOS);
         break;
+      case "ETHER":
+        tokenAddress = getString(R.string.RopstenEther);
     }
-    Log.d("swapLog", "tokenAdd = " + tokenAddress);
-    swapProof.setDestToken(tokenAddress);
+
+    if (parent.getId() == R.id.spinnerFrom) {
+      swapProof.setSrcToken(tokenAddress);
+    } else if (parent.getId() == R.id.spinnerTo) {
+      swapProof.setDestToken(tokenAddress);
+    }
   }
 
   public void onNothingSelected(AdapterView<?> parent) {
