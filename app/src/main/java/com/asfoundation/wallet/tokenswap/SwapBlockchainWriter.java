@@ -54,6 +54,7 @@ public class SwapBlockchainWriter implements SwapProofWriter {
     this.resL = listener;
   }
 
+  //writes Transactions that are only query from the blockchain
   @Override public BigInteger writeGetterSwapProof(SwapProof swapProof) {
     String from = swapProof.getFromAddress();
     String to = swapProof.getToAddress();

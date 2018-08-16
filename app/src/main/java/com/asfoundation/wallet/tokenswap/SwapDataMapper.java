@@ -27,23 +27,10 @@ public class SwapDataMapper {
     return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
   }
 
-  public byte[] getDataSwapTokenToEther(SwapProof swapProof) {
-    Address srcToken = new Address(swapProof.getSrcToken());
-    Uint minConversionRate = new Uint(BigInteger.ZERO);
-    Uint amount = new Uint(swapProof.getTokenAmount()
-        .toBigInteger());
-    List<Type> params = Arrays.asList(srcToken, amount, minConversionRate);
-    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Bool>() {
-    });
-    Function function = new Function("swapTokenToEther", params, returnTypes);
-    String encodedFunction = FunctionEncoder.encode(function);
-    return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
-  }
-
   public Function getDataExpectedRate(SwapProof swapProof) {
     Address srcToken = new Address(swapProof.getSrcToken());
     Address destToken = new Address(swapProof.getDestToken());
-    Uint srcQnty = new Uint(swapProof.getAmount()
+    Uint srcQnty = new Uint(swapProof.getTokenAmount()
         .toBigInteger());
     List<Type> params = Arrays.asList(srcToken, destToken, srcQnty);
     List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Uint>() {

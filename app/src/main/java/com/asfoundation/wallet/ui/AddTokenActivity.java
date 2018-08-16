@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.asf.wallet.R;
 import com.asfoundation.wallet.entity.Address;
 import com.asfoundation.wallet.entity.ErrorEnvelope;
-import com.asfoundation.wallet.tokenswap.swap_activity;
+import com.asfoundation.wallet.tokenswap.SwapActivity;
 import com.asfoundation.wallet.viewmodel.AddTokenViewModel;
 import com.asfoundation.wallet.viewmodel.AddTokenViewModelFactory;
 import com.asfoundation.wallet.widget.SystemView;
@@ -83,7 +83,7 @@ public class AddTokenActivity extends BaseActivity implements View.OnClickListen
     switch (v.getId()) {
       case R.id.save: {
         //onSave();
-        Intent intent = new Intent(this, swap_activity.class);
+        Intent intent = new Intent(this, SwapActivity.class);
         startActivity(intent);
       }
       break;

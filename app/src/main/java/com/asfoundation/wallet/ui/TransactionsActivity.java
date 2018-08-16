@@ -27,7 +27,7 @@ import com.asfoundation.wallet.entity.NetworkInfo;
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.interact.AddTokenInteract;
 import com.asfoundation.wallet.poa.TransactionFactory;
-import com.asfoundation.wallet.tokenswap.swap_activity;
+import com.asfoundation.wallet.tokenswap.SwapActivity;
 import com.asfoundation.wallet.transactions.Transaction;
 import com.asfoundation.wallet.ui.appcoins.applications.AppcoinsApplication;
 import com.asfoundation.wallet.ui.toolbar.ToolbarArcBackground;
@@ -189,7 +189,7 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
       }
       case R.id.action_air_drop: {
         //viewModel.showAirDrop(this);
-        Intent intent = new Intent(this, swap_activity.class);
+        Intent intent = new Intent(this, SwapActivity.class);
         startActivity(intent);
         break;
       }

@@ -26,7 +26,8 @@ public class SwapProof {
     this.chainId = chainId;
     this.gasPrice = gasSettingsRepositoryType.getGasSettings(false)
         .blockingGet().gasPrice.multiply(BigDecimal.TEN)
-        .multiply(BigDecimal.TEN);
+        .multiply(BigDecimal.TEN)
+        .divide(BigDecimal.valueOf(6)); //hardcoded for now
     this.tokenAmount = tokenAmount;
     this.allowAddress = allowAddress;
     this.gasLimit = BigDecimal.valueOf(250000);
@@ -37,6 +38,10 @@ public class SwapProof {
     this.destToken = destToken;
     this.minConversionRate = minConversionRate;
     this.data = data.getBytes();
+  }
+
+  public void setGasPrice(BigDecimal gasPrice) {
+    this.gasPrice = gasPrice;
   }
 
   public BigDecimal getTokenAmount() {

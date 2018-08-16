@@ -1,7 +1,8 @@
 package com.asfoundation.wallet.di;
 
 import com.asfoundation.wallet.advertise.WalletPoAService;
-import com.asfoundation.wallet.tokenswap.swap_activity;
+import com.asfoundation.wallet.tokenswap.SwapActivity;
+import com.asfoundation.wallet.tokenswap.SwapMock1Activity;
 import com.asfoundation.wallet.ui.AddTokenActivity;
 import com.asfoundation.wallet.ui.ConfirmationActivity;
 import com.asfoundation.wallet.ui.Erc681Receiver;
@@ -50,7 +51,10 @@ import dagger.android.ContributesAndroidInjector;
   abstract IabActivity bindIabModule();
 
   @ActivityScope @ContributesAndroidInjector(modules = ConfirmationModule.class)
-  abstract swap_activity bindSwapActivity();
+  abstract SwapActivity bindSwapActivity();
+
+  @ActivityScope @ContributesAndroidInjector(modules = ConfirmationModule.class)
+  abstract SwapMock1Activity bindSwapMock1Activiy();
 
   @ContributesAndroidInjector abstract MyAddressActivity bindMyAddressModule();
 

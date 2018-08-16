@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.tokenswap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,7 +15,7 @@ import java.math.BigInteger;
 import javax.inject.Inject;
 import org.web3j.utils.Convert;
 
-public class swap_activity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class SwapActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
   public SwapDataMapper swapDataMapper;
   @Inject SwapProofWriter swapBlockChainWriter;
@@ -30,11 +31,11 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
     setContentView(R.layout.activity_swap);
     AndroidInjection.inject(this);
     swapDataMapper = new SwapDataMapper();
-
     fromToken = findViewById(R.id.spinnerFrom);
     fromToken.setOnItemSelectedListener(this);
     toToken = findViewById(R.id.spinnerTo);
     toToken.setOnItemSelectedListener(this);
+    findViewById(R.id.bChangeToV2).setOnClickListener(v -> switchToMock1());
 
     showTxHash = new ResponseListener<String>() {
       @Override public void onResponse(String txHash) {
@@ -124,6 +125,11 @@ public class swap_activity extends AppCompatActivity implements AdapterView.OnIt
     String rateWeiStr = rateWei.toString();
     BigDecimal rate = Convert.fromWei(rateWeiStr, Convert.Unit.ETHER);
     setText("1 " + coinSelected + " = " + rate.toString() + " APPC");
+  }
+
+  public void switchToMock1() {
+    Intent myIntent = new Intent(this, SwapMock1Activity.class);
+    startActivity(myIntent);
   }
 }
 
