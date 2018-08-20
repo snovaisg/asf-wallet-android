@@ -117,15 +117,8 @@
       </intent-filter>
     </receiver>
 
-    <activity android:name="com.asfoundation.wallet.tokenswap.SwapActivity">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
     <activity
-        android:name="com.asfoundation.wallet.tokenswap.SwapMock1Activity"
+        android:name="com.asfoundation.wallet.tokenswap.SwapEtherToTokenActivity"
         android:label="SwappMock1Activity"/>
   </application>
 </manifest>

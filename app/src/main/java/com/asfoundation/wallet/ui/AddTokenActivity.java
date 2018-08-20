@@ -2,7 +2,6 @@ package com.asfoundation.wallet.ui;
 
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.asf.wallet.R;
 import com.asfoundation.wallet.entity.Address;
 import com.asfoundation.wallet.entity.ErrorEnvelope;
-import com.asfoundation.wallet.tokenswap.SwapActivity;
+import com.asfoundation.wallet.tokenswap.SwapEtherToTokenActivity;
 import com.asfoundation.wallet.viewmodel.AddTokenViewModel;
 import com.asfoundation.wallet.viewmodel.AddTokenViewModelFactory;
 import com.asfoundation.wallet.widget.SystemView;
@@ -83,8 +82,7 @@ public class AddTokenActivity extends BaseActivity implements View.OnClickListen
     switch (v.getId()) {
       case R.id.save: {
         //onSave();
-        Intent intent = new Intent(this, SwapActivity.class);
-        startActivity(intent);
+        startActivity(SwapEtherToTokenActivity.newIntent(this));
       }
       break;
     }

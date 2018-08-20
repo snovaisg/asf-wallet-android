@@ -56,7 +56,8 @@ import com.asfoundation.wallet.service.RealmManager;
 import com.asfoundation.wallet.service.TickerService;
 import com.asfoundation.wallet.service.TrustWalletTickerService;
 import com.asfoundation.wallet.tokenswap.SwapBlockchainWriter;
-import com.asfoundation.wallet.tokenswap.SwapProof;
+import com.asfoundation.wallet.tokenswap.SwapDataMapper;
+import com.asfoundation.wallet.tokenswap.SwapInteractor;
 import com.asfoundation.wallet.tokenswap.SwapProofWriter;
 import com.asfoundation.wallet.tokenswap.SwapTransactionFactory;
 import com.asfoundation.wallet.ui.AppcoinsApps;
@@ -359,16 +360,10 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
 
   @Singleton @Provides SwapProofWriter provideSwapBlockChainWriter(Web3jProvider web3jProvider,
       SwapTransactionFactory swapTransactionFactory) {
-    return new SwapBlockchainWriter(web3jProvider, swapTransactionFactory);
+    return new SwapBlockchainWriter(web3jProvider, swapTransactionFactory, new SwapDataMapper());
   }
 
-  @Singleton @Provides SwapProof provideSwapProof(
-      GasSettingsRepositoryType gasSettingsRepositoryType) {
-    return new SwapProof(3, gasSettingsRepositoryType, BigDecimal.ZERO, BigDecimal.ZERO,
-        "0x9dc8f43a6321f5f85a41ee042da2a2263c15b717", "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "0x2799f05B55d56be756Ca01Af40Bf7350787F48d4",
-        "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
-        (float) 0, "hello world"); // <----- amount = 1k wei
-    // <----- chain = 3 (ropsten)
+  @Singleton @Provides SwapInteractor provideSwapInteractor(SwapProofWriter swapBlockchainWriter) {
+    return new SwapInteractor(swapBlockchainWriter, new SwapDataMapper());
   }
 }

@@ -28,12 +28,14 @@ public class SwapBlockchainWriter implements SwapProofWriter {
 
   private final Web3jProvider web3jProvider;
   private final SwapTransactionFactory swapTransactionFactory;
+  private SwapDataMapper swapDataMapper;
   private ResponseListener resL;
 
   public SwapBlockchainWriter(Web3jProvider web3jProvider,
-      SwapTransactionFactory swapTransactionFactory) {
+      SwapTransactionFactory swapTransactionFactory, SwapDataMapper swapDataMapper) {
     this.web3jProvider = web3jProvider;
     this.swapTransactionFactory = swapTransactionFactory;
+    this.swapDataMapper = swapDataMapper;
   }
 
   @SuppressLint("CheckResult") @Override public void writeSwapProof(SwapProof swapProof) {
@@ -58,7 +60,7 @@ public class SwapBlockchainWriter implements SwapProofWriter {
   @Override public BigInteger writeGetterSwapProof(SwapProof swapProof) {
     String from = swapProof.getFromAddress();
     String to = swapProof.getToAddress();
-    Function getRates = new SwapDataMapper().getDataExpectedRate(swapProof);
+    Function getRates = swapDataMapper.getDataExpectedRate(swapProof);
     String encodedFunction = FunctionEncoder.encode(getRates);
     Transaction ethCallTransaction = createEthCallTransaction(from, to, encodedFunction);
     try {

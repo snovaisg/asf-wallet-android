@@ -1,6 +1,5 @@
 package com.asfoundation.wallet.tokenswap;
 
-import com.asfoundation.wallet.repository.GasSettingsRepositoryType;
 import java.math.BigDecimal;
 
 public class SwapProof {
@@ -17,28 +16,6 @@ public class SwapProof {
   private String destToken;
   private Float minConversionRate;
   private byte[] data;
-
-  public SwapProof(int chainId, GasSettingsRepositoryType gasSettingsRepositoryType,
-      BigDecimal amount, BigDecimal tokenAmount, String fromAddress, String toAddress,
-      String srcToken, String destToken, String allowAddress, Float minConversionRate,
-      String data) {
-
-    this.chainId = chainId;
-    this.gasPrice = gasSettingsRepositoryType.getGasSettings(false)
-        .blockingGet().gasPrice.multiply(BigDecimal.TEN)
-        .multiply(BigDecimal.TEN)
-        .divide(BigDecimal.valueOf(6)); //hardcoded for now
-    this.tokenAmount = tokenAmount;
-    this.allowAddress = allowAddress;
-    this.gasLimit = BigDecimal.valueOf(250000);
-    this.amount = amount;
-    this.fromAddress = fromAddress;
-    this.toAddress = toAddress;
-    this.srcToken = srcToken;
-    this.destToken = destToken;
-    this.minConversionRate = minConversionRate;
-    this.data = data.getBytes();
-  }
 
   public void setGasPrice(BigDecimal gasPrice) {
     this.gasPrice = gasPrice;
@@ -104,8 +81,16 @@ public class SwapProof {
     return gasPrice;
   }
 
+  public void setGasLimit(BigDecimal gasLimit) {
+    this.gasLimit = gasLimit;
+  }
+
   public BigDecimal getGasLimit() {
     return gasLimit;
+  }
+
+  public void setChainId(int chainId) {
+    this.chainId = chainId;
   }
 
   public int getChainId() {
