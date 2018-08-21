@@ -1,12 +1,13 @@
 package com.asfoundation.wallet.tokenswap;
 
-import com.asfoundation.wallet.repository.GasSettingsRepositoryType;
 import java.math.BigDecimal;
 
 public class SwapProof {
 
   private int chainId;
   private BigDecimal gasPrice;
+  private BigDecimal tokenAmount;
+  private String allowAddress;
   private BigDecimal gasLimit;
   private BigDecimal amount;
   private String fromAddress;
@@ -16,22 +17,16 @@ public class SwapProof {
   private Float minConversionRate;
   private byte[] data;
 
-  public SwapProof(int chainId, GasSettingsRepositoryType gasSettingsRepositoryType,
-      BigDecimal amount, String fromAddress, String toAddress, String srcToken, String destToken,
-      Float minConversionRate, String data) {
+  public void setGasPrice(BigDecimal gasPrice) {
+    this.gasPrice = gasPrice;
+  }
 
-    this.chainId = chainId;
-    this.gasPrice = gasSettingsRepositoryType.getGasSettings(false)
-        .blockingGet().gasPrice.multiply(BigDecimal.TEN)
-        .multiply(BigDecimal.TEN);
-    this.gasLimit = BigDecimal.valueOf(250000);
-    this.amount = amount;
-    this.fromAddress = fromAddress;
-    this.toAddress = toAddress;
-    this.srcToken = srcToken;
-    this.destToken = destToken;
-    this.minConversionRate = minConversionRate;
-    this.data = data.getBytes();
+  public BigDecimal getTokenAmount() {
+    return tokenAmount;
+  }
+
+  public void setTokenAmount(BigDecimal tokenAmount) {
+    this.tokenAmount = tokenAmount;
   }
 
   public Float getMinConversionRate() {
@@ -86,8 +81,16 @@ public class SwapProof {
     return gasPrice;
   }
 
+  public void setGasLimit(BigDecimal gasLimit) {
+    this.gasLimit = gasLimit;
+  }
+
   public BigDecimal getGasLimit() {
     return gasLimit;
+  }
+
+  public void setChainId(int chainId) {
+    this.chainId = chainId;
   }
 
   public int getChainId() {
@@ -100,5 +103,13 @@ public class SwapProof {
 
   public void setAmount(BigDecimal amount) {
     this.amount = amount;
+  }
+
+  public String getAllowAddress() {
+    return allowAddress;
+  }
+
+  public void setAllowAddress(String allowAddress) {
+    this.allowAddress = allowAddress;
   }
 }
