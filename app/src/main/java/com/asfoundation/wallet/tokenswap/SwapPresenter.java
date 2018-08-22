@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.tokenswap;
 
+import android.text.Editable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.web3j.utils.Convert;
@@ -43,5 +44,15 @@ public class SwapPresenter {
     view.showRates(ratio);
   }
 
-
+  public void amountChanged(String srcTokenAddress, String destTokenAddress, Editable s) {
+    float userInput;
+    try {
+      userInput = Float.parseFloat(s.toString());
+      float amount = swapInteractor.calcRate(srcTokenAddress, destTokenAddress, userInput);
+      String amount_str = String.valueOf(amount);
+      view.setTextTokenTo(amount_str);
+    } catch (Exception e) {
+      view.setTextTokenTo("0");
+    }
+  }
 }

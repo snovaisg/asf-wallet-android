@@ -7,10 +7,13 @@ public class SwapInteractor {
   private final SwapProofWriter swapBlockchainWriter;
   private final SwapDataMapper swapDataMapper;
   private SwapProofFactory swapProofFactory;
+  private SwapRates swapRates;
 
-  public SwapInteractor(SwapProofWriter swapBlockchainWriter, SwapDataMapper swapDataMapper) {
+  public SwapInteractor(SwapProofWriter swapBlockchainWriter, SwapDataMapper swapDataMapper,
+      SwapRates swapRates) {
     this.swapBlockchainWriter = swapBlockchainWriter;
     this.swapDataMapper = swapDataMapper;
+    this.swapRates = swapRates;
     this.swapProofFactory = new SwapProofFactory();
   }
 
@@ -22,6 +25,7 @@ public class SwapInteractor {
     swapProof.setTokenAmount(Convert.toWei(tokenAmount, Convert.Unit.ETHER));
 
     BigInteger rateWei = swapBlockchainWriter.writeGetterSwapProof(swapProof);
+    saveRates(srcToken, destToken, rateWei);
     return rateWei;
   }
 
@@ -37,5 +41,34 @@ public class SwapInteractor {
 
     swapBlockchainWriter.setListener(listener);
     swapBlockchainWriter.writeSwapProof(swapProof);
+  }
+
+  public void saveRates(String srcToken, String destToken, BigInteger rate) {
+    //Eth to Appc use case
+    if (srcToken.equals("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") && destToken.equals(
+        "0x2799f05B55d56be756Ca01Af40Bf7350787F48d4")) {
+      swapRates.setEthToAppc(rate);
+    }
+  }
+
+  public float calcRate(String srcToken, String destToken, float userInput) {
+    //Ether to Appc use case
+    try {
+      if (srcToken.equals("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") && destToken.equals(
+          "0x2799f05B55d56be756Ca01Af40Bf7350787F48d4")) {
+        BigInteger rateWei = swapRates.getEthToAppc();
+
+        if (rateWei == null) {
+          return 0;
+        }
+        float rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER)
+            .floatValue();
+        float result = rate * userInput;
+        return result;
+      }
+      return 0;
+    } catch (Exception e) {
+      return 0;
+    }
   }
 }

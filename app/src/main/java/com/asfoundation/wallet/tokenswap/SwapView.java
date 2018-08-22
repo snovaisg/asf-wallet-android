@@ -6,4 +6,6 @@ public interface SwapView {
   void showRates(String rates);
 
   void clickedSwap();
+
+  void setTextTokenTo(String amount);
 }

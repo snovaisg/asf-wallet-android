@@ -59,6 +59,7 @@ import com.asfoundation.wallet.tokenswap.SwapBlockchainWriter;
 import com.asfoundation.wallet.tokenswap.SwapDataMapper;
 import com.asfoundation.wallet.tokenswap.SwapInteractor;
 import com.asfoundation.wallet.tokenswap.SwapProofWriter;
+import com.asfoundation.wallet.tokenswap.SwapRates;
 import com.asfoundation.wallet.tokenswap.SwapTransactionFactory;
 import com.asfoundation.wallet.ui.AppcoinsApps;
 import com.asfoundation.wallet.ui.airdrop.AirdropChainIdMapper;
@@ -364,6 +365,6 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
   }
 
   @Singleton @Provides SwapInteractor provideSwapInteractor(SwapProofWriter swapBlockchainWriter) {
-    return new SwapInteractor(swapBlockchainWriter, new SwapDataMapper());
+    return new SwapInteractor(swapBlockchainWriter, new SwapDataMapper(), new SwapRates());
   }
 }
