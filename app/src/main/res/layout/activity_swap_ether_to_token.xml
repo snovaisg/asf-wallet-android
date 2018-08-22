@@ -60,7 +60,7 @@
       android:inputType="none"
       android:text="for "
       android:textSize="30dp"
-      app:layout_constraintBottom_toTopOf="@+id/swapButton"
+      app:layout_constraintBottom_toTopOf="@+id/bSwap"
       app:layout_constraintEnd_toStartOf="@+id/spinnerTo"
       app:layout_constraintStart_toEndOf="@+id/spinnerFrom"
       app:layout_constraintTop_toBottomOf="@+id/tvSwapTitle"
@@ -109,7 +109,7 @@
       app:layout_constraintTop_toTopOf="parent"
       />
   <Button
-      android:id="@+id/swapButton"
+      android:id="@+id/bSwap"
       android:layout_width="88dp"
       android:layout_height="48dp"
       android:layout_marginBottom="46dp"

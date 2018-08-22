@@ -1,17 +1,19 @@
 package com.asfoundation.wallet.tokenswap;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.asf.wallet.R;
 import dagger.android.AndroidInjection;
 import javax.inject.Inject;
@@ -48,6 +50,7 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
     sTokenFrom = findViewById(R.id.spinnerFrom);
     sTokenTo = findViewById(R.id.spinnerTo);
     tvShowRates = findViewById(R.id.tvRates);
+    findViewById(R.id.bSwap).setOnClickListener(v -> clickedSwap());
 
     sTokenFrom.setOnItemSelectedListener(this);
     sTokenTo.setOnItemSelectedListener(this);
@@ -55,8 +58,7 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
       @Override public void onResponse(String txHash) {
         runOnUiThread(new Runnable() {
           @Override public void run() {
-
-            Log.d("swapLog2", "hey");
+            showToast();
           }
         });
       }
@@ -104,6 +106,13 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
     clickedGetRates();
   }
 
+  public void showToast() {
+    Toast toast = Toast.makeText(this, "Swap was successfull", Toast.LENGTH_SHORT);
+    View v = toast.getView();
+    v.setBackgroundColor(getResources().getColor(R.color.grey));
+    toast.show();
+  }
+
   @Override public void clickedGetRates() {
     String srcToken = getString(R.string.RopstenEther);
     String destToken = getString(R.string.RopstenAppCoins);
@@ -125,7 +134,41 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
         .toString();
     String toAddress = getString(R.string.RopstenKyberNetworkProxy);
 
-    presenter.swapEtherToToken(srcToken, destToken, amount, toAddress, showTxHash);
+    String tokenNameFrom = sTokenFrom.getSelectedItem()
+        .toString();
+    String tokenNameTo = sTokenTo.getSelectedItem()
+        .toString();
+    String amountFrom = amountFromView.getText()
+        .toString();
+    String amountTo = amountToView.getText()
+        .toString();
+
+    new AlertDialog.Builder(this).setTitle("Swap Invoice")
+        .setMessage("Are you sure you want to swap\n\n"
+            + amountFrom
+            + " "
+            + tokenNameFrom
+            + "\nfor\n"
+            + amountTo
+            + " "
+            + tokenNameTo
+            + " ?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+          @Override public void onClick(DialogInterface dialog, int which) {
+            //Do Something Here
+            presenter.swapEtherToToken(srcToken, destToken, amount, toAddress, showTxHash);
+          }
+        })
+        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+          @Override public void onClick(DialogInterface dialog, int which) {
+            //Do Something Here
+          }
+        })
+        .show();
+
+
   }
 
   @Override public void setTextTokenTo(String amount) {
