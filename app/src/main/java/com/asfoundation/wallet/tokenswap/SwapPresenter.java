@@ -20,9 +20,10 @@ public class SwapPresenter {
     // ToDo: get confirmation of transaction and handle Ux
   }
 
-  public void getRates(String toAddress, String srcToken, String destToken, String tokenAmount) {
+  public void getRates(String srcToken, String destToken, String tokenAmount) {
     // fetch rates 1:1
-    BigInteger rateWei = swapInteractor.getRates(toAddress, srcToken, destToken, tokenAmount);
+    if (tokenAmount.isEmpty()) tokenAmount = "1";
+    BigInteger rateWei = swapInteractor.getRates(srcToken, destToken, tokenAmount);
     // Convert to UI/UX
     Float amount = Float.parseFloat(tokenAmount);
     Float swapValueWei = rateWei.floatValue() * amount;
@@ -31,4 +32,16 @@ public class SwapPresenter {
     String swapValueEthStr = swapValueEth.toString();
     view.showRates(swapValueEthStr);
   }
+
+  public void showRatio(String srcToken, String destToken, String srcTokenAddress,
+      String destTokenAddress) {
+    String tokenAmount = "1";
+    BigInteger rateWei = swapInteractor.getRates(srcTokenAddress, destTokenAddress, tokenAmount);
+    //Convert to UI/UX
+    BigDecimal rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER);
+    String ratio = "1 " + srcToken + " = " + rate.toString() + " " + destToken;
+    view.showRates(ratio);
+  }
+
+
 }

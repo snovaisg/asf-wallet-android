@@ -14,10 +14,9 @@ public class SwapInteractor {
     this.swapProofFactory = new SwapProofFactory();
   }
 
-  public BigInteger getRates(String toAddress, String srcToken, String destToken,
+  public BigInteger getRates(String srcToken, String destToken,
       String tokenAmount) {
     SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setToAddress(toAddress);
     swapProof.setSrcToken(srcToken);
     swapProof.setDestToken(destToken);
     swapProof.setTokenAmount(Convert.toWei(tokenAmount, Convert.Unit.ETHER));
