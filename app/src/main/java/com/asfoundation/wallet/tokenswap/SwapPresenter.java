@@ -44,15 +44,28 @@ public class SwapPresenter {
     view.showRates(ratio);
   }
 
-  public void amountChanged(String srcTokenAddress, String destTokenAddress, Editable s) {
+  public void amountChanged(String srcTokenAddress, String destTokenAddress, Editable s,
+      String source) {
     float userInput;
+    float amount;
     try {
       userInput = Float.parseFloat(s.toString());
-      float amount = swapInteractor.calcRate(srcTokenAddress, destTokenAddress, userInput);
-      String amount_str = String.valueOf(amount);
-      view.setTextTokenTo(amount_str);
+      float rate = swapInteractor.calcRate(srcTokenAddress, destTokenAddress);
+      if (source.equals(view.getTo())) {
+        amount = 1 / rate * userInput;
+        String amount_str = String.format("%.6f", amount);
+        view.setTextTokenFrom(amount_str);
+      } else {
+        amount = rate * userInput;
+        String amount_str = String.format("%.6f", amount);
+        view.setTextTokenTo(amount_str);
+      }
     } catch (Exception e) {
-      view.setTextTokenTo("0");
+      if (source.equals(view.getFrom())) {
+        view.setTextTokenTo("0");
+      } else {
+        view.setTextTokenFrom("0");
+      }
     }
   }
 }

@@ -51,7 +51,7 @@ public class SwapInteractor {
     }
   }
 
-  public float calcRate(String srcToken, String destToken, float userInput) {
+  public float calcRate(String srcToken, String destToken) {
     //Ether to Appc use case
     try {
       if (srcToken.equals("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") && destToken.equals(
@@ -63,8 +63,7 @@ public class SwapInteractor {
         }
         float rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER)
             .floatValue();
-        float result = rate * userInput;
-        return result;
+        return rate;
       }
       return 0;
     } catch (Exception e) {

@@ -27,7 +27,10 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
   private Spinner sTokenFrom;
   private Spinner sTokenTo;
   private TextView tvShowRates;
-
+  private final String from = "FROM";
+  private final String to = "TO";
+  private TextWatcher textWatcherFrom;
+  private TextWatcher textWatcherTo;
 
   public static Intent newIntent(Context context) {
     return new Intent(context, SwapEtherToTokenActivity.class);
@@ -62,7 +65,7 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
         error.printStackTrace();
       }
     };
-    TextWatcher textWatcher = new TextWatcher() {
+    textWatcherFrom = new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
       }
@@ -76,10 +79,28 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
             .toString());
         String destTokenAddress = get_addresses(sTokenTo.getSelectedItem()
             .toString());
-        presenter.amountChanged(srcTokenAddress, destTokenAddress, s);
+        presenter.amountChanged(srcTokenAddress, destTokenAddress, s, from);
       }
     };
-    amountFromView.addTextChangedListener(textWatcher);
+    textWatcherTo = new TextWatcher() {
+      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+      }
+
+      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+      }
+
+      @Override public void afterTextChanged(Editable s) {
+        String srcTokenAddress = get_addresses(sTokenFrom.getSelectedItem()
+            .toString());
+        String destTokenAddress = get_addresses(sTokenTo.getSelectedItem()
+            .toString());
+        presenter.amountChanged(srcTokenAddress, destTokenAddress, s, to);
+      }
+    };
+    amountFromView.addTextChangedListener(textWatcherFrom);
+    amountToView.addTextChangedListener(textWatcherTo);
     clickedGetRates();
   }
 
@@ -108,7 +129,15 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
   }
 
   @Override public void setTextTokenTo(String amount) {
+    amountToView.removeTextChangedListener(textWatcherTo);
     amountToView.setText(amount);
+    amountToView.addTextChangedListener(textWatcherTo);
+  }
+
+  @Override public void setTextTokenFrom(String amount) {
+    amountFromView.removeTextChangedListener(textWatcherFrom);
+    amountFromView.setText(amount);
+    amountFromView.addTextChangedListener(textWatcherFrom);
   }
 
   @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -151,6 +180,14 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
         break;
     }
     return address;
+  }
+
+  public String getTo() {
+    return to;
+  }
+
+  public String getFrom() {
+    return from;
   }
 }
 
