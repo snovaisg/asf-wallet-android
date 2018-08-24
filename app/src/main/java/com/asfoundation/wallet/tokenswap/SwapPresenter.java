@@ -50,7 +50,7 @@ public class SwapPresenter {
     float amount;
     try {
       userInput = Float.parseFloat(s.toString());
-      float rate = swapInteractor.calcRate(srcTokenAddress, destTokenAddress);
+      float rate = calcRate(srcTokenAddress, destTokenAddress, s.toString());
       if (source.equals(view.getTo())) {
         amount = 1 / rate * userInput;
         String amount_str = String.format("%.6f", amount);
@@ -67,5 +67,18 @@ public class SwapPresenter {
         view.setTextTokenFrom("0");
       }
     }
+  }
+
+  public float calcRate(String srcToken, String destToken, String amount) {
+    try {
+
+      BigInteger rateWei = swapInteractor.getRates(srcToken, destToken, amount);
+      float rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER)
+          .floatValue();
+      return rate;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 0;
   }
 }
