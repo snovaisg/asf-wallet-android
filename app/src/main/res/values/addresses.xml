@@ -32,7 +32,7 @@
   <string name="KovanWhiteList">0x40B4C521d52E744E0fB6DaEF72BE37D4E99E2D2A</string>
 
 
-  <!-- KyberNetwork  Token Addresses -->
+  <!-- Token Addresses -->
   <string name="MainNetEther">0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</string>
   <string name="RopstenEther">0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</string>
 
@@ -45,8 +45,8 @@
   <string name="MainNetAirSwap">0x27054b13b1b798b345b591a4d22e6562d47ea75a</string>
   <string name="RopstenAirSwap">0xeF06F410C26a0fF87b3a43927459Cce99268a2eF</string>
 
-  <string name="MainNetBasicAttentionToken">0x0d8775f648430679a709e98d2b0cb6250d2887ef</string>
-  <string name="RopstenBasicAttentionToken">0xDb0040451F373949A4Be60dcd7b6B8D6E42658B6</string>
+  <string name="MainNetBAT">0x0d8775f648430679a709e98d2b0cb6250d2887ef</string>
+  <string name="RopstenBAT">0xDb0040451F373949A4Be60dcd7b6B8D6E42658B6</string>
 
   <string name="MainNetDai">0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359</string>
   <string name="RopstenDai">0xaD6D458402F60fD3Bd25163575031ACDce07538D</string>
@@ -66,9 +66,13 @@
   <string name="MainNetKNC">0xdd974D5C2e2928deA5F71b9825b8b646686BD200</string>
   <string name="RopstenKNC">0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6</string>
 
+  <string name="MainNetOMG">0xd26114cd6EE289AccF82350c8d8487fedB8A0C07</string>
+  <string name="RopstenOMG">0x4BFBa4a8F28755Cb2061c413459EE562c6B9c51b</string>
+
 
   @array/tokensAvailableForSwap
   <string-array name="tokensAvailableForSwap">
+    <item>ETHER</item>
     <item>APPC</item>
     <item>KNC</item>
     <item>EOS</item>
