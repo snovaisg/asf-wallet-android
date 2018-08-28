@@ -1,6 +1,7 @@
 package com.asfoundation.wallet.tokenswap;
 
 import java.math.BigDecimal;
+import org.web3j.abi.datatypes.Function;
 
 public class SwapProof {
 
@@ -12,10 +13,13 @@ public class SwapProof {
   private BigDecimal amount;
   private String fromAddress;
   private String toAddress;
+  private String approveAddress;
   private String srcToken;
   private String destToken;
   private Float minConversionRate;
+  private Object result;
   private byte[] data;
+  private Function function;
 
   public void setGasPrice(BigDecimal gasPrice) {
     this.gasPrice = gasPrice;
@@ -111,5 +115,29 @@ public class SwapProof {
 
   public void setAllowAddress(String allowAddress) {
     this.allowAddress = allowAddress;
+  }
+
+  public String getApproveAddress() {
+    return approveAddress;
+  }
+
+  public void setApproveAddress(String approveAddress) {
+    this.approveAddress = approveAddress;
+  }
+
+  public Function getFunction() {
+    return function;
+  }
+
+  public void setFunction(Function function) {
+    this.function = function;
+  }
+  
+  public Object getResult() {
+    return result;
+  }
+
+  public void setResult(Object result) {
+    this.result = result;
   }
 }

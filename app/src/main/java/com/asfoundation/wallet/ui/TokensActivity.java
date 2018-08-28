@@ -76,6 +76,7 @@ public class TokensActivity extends BaseActivity implements View.OnClickListener
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_add, menu);
     getMenuInflater().inflate(R.menu.menu_edit, menu);
+    getMenuInflater().inflate(R.menu.menu_swap, menu);
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -93,6 +94,11 @@ public class TokensActivity extends BaseActivity implements View.OnClickListener
         adapter.clear();
         viewModel.showTransactions(this);
       }
+      break;
+      case R.id.action_swap: {
+        viewModel.showSwap(this);
+      }
+
     }
     return super.onOptionsItemSelected(item);
   }

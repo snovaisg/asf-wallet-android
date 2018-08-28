@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.viewmodel;
 
+import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
@@ -13,6 +14,7 @@ import com.asfoundation.wallet.router.AddTokenRouter;
 import com.asfoundation.wallet.router.ChangeTokenCollectionRouter;
 import com.asfoundation.wallet.router.SendRouter;
 import com.asfoundation.wallet.router.TransactionsRouter;
+import com.asfoundation.wallet.tokenswap.SwapEtherToTokenActivity;
 import java.math.BigDecimal;
 
 import static com.asfoundation.wallet.C.ErrorCode.EMPTY_COLLECTION;
@@ -107,5 +109,9 @@ public class TokensViewModel extends BaseViewModel {
 
   public void showEditTokens(Context context) {
     changeTokenCollectionRouter.open(context, wallet.getValue());
+  }
+
+  public void showSwap(Activity activity) {
+    activity.startActivity(SwapEtherToTokenActivity.newIntent(activity));
   }
 }

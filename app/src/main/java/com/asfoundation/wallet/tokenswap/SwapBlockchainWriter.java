@@ -60,8 +60,8 @@ public class SwapBlockchainWriter implements SwapProofWriter {
   @Override public BigInteger writeGetterSwapProof(SwapProof swapProof) {
     String from = swapProof.getFromAddress();
     String to = swapProof.getToAddress();
-    Function getRates = swapDataMapper.getDataExpectedRate(swapProof);
-    String encodedFunction = FunctionEncoder.encode(getRates);
+    Function function = swapProof.getFunction();
+    String encodedFunction = FunctionEncoder.encode(function);
     Transaction ethCallTransaction = createEthCallTransaction(from, to, encodedFunction);
     try {
       Future<EthCall> rawResponse = web3jProvider.get(swapProof.getChainId())
@@ -72,7 +72,7 @@ public class SwapBlockchainWriter implements SwapProofWriter {
       if (!rawResponse.get()
           .hasError()) {
         List<Type> response = FunctionReturnDecoder.decode(rawResponse.get()
-            .getValue(), getRates.getOutputParameters());
+            .getValue(), function.getOutputParameters());
         return ((Uint) response.get(0)).getValue();
       } else {
         throw new RuntimeException(mapErrorToMessage(rawResponse.get()

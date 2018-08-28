@@ -11,6 +11,8 @@ public interface SwapView {
 
   void setTextTokenFrom(String amount);
 
+  void showToast();
+
   String getTo();
 
   String getFrom();

@@ -307,6 +307,11 @@
   <string name="swap_button">Swap</string>
   <string name="ether_title">ETH</string>
   <string name="appc_title">APPC</string>
+  <string name="action_swap_wallet">Swap Wallet</string>
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
+  <string name="swap_sent">Transaction has been sent successfully!\nPlease wait a few moments</string>
+
 
   <string-array name="swapTokens1">
     <item>Ether</item>

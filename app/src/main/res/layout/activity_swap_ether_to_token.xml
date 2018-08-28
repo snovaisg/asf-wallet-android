@@ -8,6 +8,12 @@
     tools:context="com.asfoundation.wallet.tokenswap.SwapEtherToTokenActivity"
     >
 
+
+  <include
+      layout="@layout/layout_app_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
   <TextView
       android:id="@+id/tvSwapTitle"
       android:layout_width="wrap_content"

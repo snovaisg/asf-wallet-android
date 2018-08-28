@@ -1,6 +1,5 @@
 package com.asfoundation.wallet.tokenswap;
 
-import android.text.Editable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.web3j.utils.Convert;
@@ -9,16 +8,39 @@ public class SwapPresenter {
 
   private SwapView view;
   private SwapInteractor swapInteractor;
+  private ResponseListener resListenner;
+  private ResponseListener<String> transactionSentListener;
 
   public SwapPresenter(SwapView view, SwapInteractor swapInteractor) {
     this.view = view;
     this.swapInteractor = swapInteractor;
+    this.transactionSentListener = new ResponseListener<String>() {
+      @Override public void onResponse(String s) {
+        //view.showToast(); //está a dar erro io.reactivex.exceptions.UndeliverableException: java.lang.RuntimeException: Can't toast on a thread that has not called Looper.prepare()
+      }
+
+      @Override public void onError(Throwable error) {
+        error.printStackTrace();
+      }
+    };
   }
 
-  public void swapEtherToToken(String srcToken, String destToken, String amount, String ToAddress,
-      ResponseListener listener) {
-    swapInteractor.swapEtherToToken(srcToken, destToken, amount, ToAddress, listener);
-    // ToDo: get confirmation of transaction and handle Ux
+  public void swapEtherToToken(String destToken, String amount, String ToAddress) {
+    swapInteractor.swapEtherToToken(destToken, amount, ToAddress, transactionSentListener);
+  }
+
+  public void swapTokenToEtherApprove(String srcToken, String destToken, String amount,
+      String ToAddress, String approveAddress) {
+    resListenner = new ResponseListener() {
+      @Override public void onResponse(Object o) {
+        callSwapTokenToEther(srcToken, destToken, amount, ToAddress, transactionSentListener);
+      }
+
+      @Override public void onError(Throwable error) {
+        error.printStackTrace();
+      }
+    };
+    swapInteractor.approve(srcToken, destToken, amount, approveAddress, resListenner);
   }
 
   public void getRates(String srcToken, String destToken, String tokenAmount) {
@@ -44,13 +66,13 @@ public class SwapPresenter {
     view.showRates(ratio);
   }
 
-  public void amountChanged(String srcTokenAddress, String destTokenAddress, Editable s,
+  public void amountChanged(String srcTokenAddress, String destTokenAddress, String userInputStr,
       String source) {
     float userInput;
     float amount;
     try {
-      userInput = Float.parseFloat(s.toString());
-      float rate = calcRate(srcTokenAddress, destTokenAddress, s.toString());
+      userInput = Float.parseFloat(userInputStr.toString());
+      float rate = calcRate(srcTokenAddress, destTokenAddress, userInputStr.toString());
       if (source.equals(view.getTo())) {
         amount = 1 / rate * userInput;
         String amount_str = String.format("%.6f", amount);
@@ -81,4 +103,37 @@ public class SwapPresenter {
     }
     return 0;
   }
+
+  public void swap(String srcToken, String destToken, String amount, String toAddress,
+      String approveAddress) {
+    String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    if (srcToken.equals(ether_add)) {
+      swapEtherToToken(destToken, amount, toAddress);
+    } else if ((!srcToken.equals(ether_add)) && (destToken.equals(ether_add))) {
+      swapTokenToEther(srcToken, destToken, amount, toAddress, approveAddress);
+    }
+  }
+
+  public void swapTokenToEther(String srcToken, String destToken, String amount, String toAddress,
+      String approveAddress) {
+    float allowance = checkAllowance(approveAddress, srcToken);
+    if (allowance >= Float.parseFloat(amount)) {
+      swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, transactionSentListener);
+    } else {
+      //need to approve first
+      swapTokenToEtherApprove(srcToken, destToken, amount, toAddress, approveAddress);
+    }
+  }
+
+  public float checkAllowance(String spender, String toAddress) {
+    //get owner
+    String owner = "0xa0d484a943dad7ef23dbc6a4acd3a005f530106e"; //hack hardcoded
+    return swapInteractor.getAllowance(owner, spender, toAddress);
+  }
+
+  public void callSwapTokenToEther(String srcToken, String destToken, String amount,
+      String toAddress, ResponseListener<String> listenner) {
+    swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, transactionSentListener);
+  }
+
 }

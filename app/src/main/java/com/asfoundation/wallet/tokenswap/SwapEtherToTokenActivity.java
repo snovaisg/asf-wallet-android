@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,14 +14,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.asf.wallet.R;
+import com.asfoundation.wallet.ui.BaseActivity;
 import dagger.android.AndroidInjection;
 import javax.inject.Inject;
 
-public class SwapEtherToTokenActivity extends AppCompatActivity
+public class SwapEtherToTokenActivity extends BaseActivity
     implements SwapView, AdapterView.OnItemSelectedListener {
   @Inject SwapInteractor swapInteractor;
-  private EditText etSrcAmount;
-  private ResponseListener<String> showTxHash;
   private SwapPresenter presenter;
   private EditText amountFromView;
   private EditText amountToView;
@@ -44,7 +42,8 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
     AndroidInjection.inject(this);
     presenter = new SwapPresenter(this, swapInteractor);
 
-    etSrcAmount = findViewById(R.id.etAmountFrom);
+    toolbar();
+
     amountFromView = findViewById(R.id.etAmountFrom);
     amountToView = findViewById(R.id.etAmountTo);
     sTokenFrom = findViewById(R.id.spinnerFrom);
@@ -54,51 +53,41 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
 
     sTokenFrom.setOnItemSelectedListener(this);
     sTokenTo.setOnItemSelectedListener(this);
-    showTxHash = new ResponseListener<String>() {
-      @Override public void onResponse(String txHash) {
-        runOnUiThread(new Runnable() {
-          @Override public void run() {
-            showToast();
-          }
-        });
-      }
 
-      @Override public void onError(Throwable error) {
-        error.printStackTrace();
-      }
-    };
     textWatcherFrom = new TextWatcher() {
-      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      @Override
+      public void beforeTextChanged(CharSequence textBox, int start, int count, int after) {
 
       }
 
-      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+      @Override public void onTextChanged(CharSequence textBox, int start, int before, int count) {
 
       }
 
-      @Override public void afterTextChanged(Editable s) {
-        String srcTokenAddress = get_addresses(sTokenFrom.getSelectedItem()
+      @Override public void afterTextChanged(Editable textBox) {
+        String srcTokenAddress = getAddresses(sTokenFrom.getSelectedItem()
             .toString());
-        String destTokenAddress = get_addresses(sTokenTo.getSelectedItem()
+        String destTokenAddress = getAddresses(sTokenTo.getSelectedItem()
             .toString());
-        presenter.amountChanged(srcTokenAddress, destTokenAddress, s, from);
+        presenter.amountChanged(srcTokenAddress, destTokenAddress, textBox.toString(), from);
       }
     };
     textWatcherTo = new TextWatcher() {
-      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      @Override
+      public void beforeTextChanged(CharSequence textBox, int start, int count, int after) {
 
       }
 
-      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+      @Override public void onTextChanged(CharSequence textBox, int start, int before, int count) {
 
       }
 
-      @Override public void afterTextChanged(Editable s) {
-        String srcTokenAddress = get_addresses(sTokenFrom.getSelectedItem()
+      @Override public void afterTextChanged(Editable textBox) {
+        String srcTokenAddress = getAddresses(sTokenFrom.getSelectedItem()
             .toString());
-        String destTokenAddress = get_addresses(sTokenTo.getSelectedItem()
+        String destTokenAddress = getAddresses(sTokenTo.getSelectedItem()
             .toString());
-        presenter.amountChanged(srcTokenAddress, destTokenAddress, s, to);
+        presenter.amountChanged(srcTokenAddress, destTokenAddress, textBox.toString(), to);
       }
     };
     amountFromView.addTextChangedListener(textWatcherFrom);
@@ -106,17 +95,10 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
     clickedGetRates();
   }
 
-  public void showToast() {
-    Toast toast = Toast.makeText(this, "Swap was successfull", Toast.LENGTH_SHORT);
-    View v = toast.getView();
-    v.setBackgroundColor(getResources().getColor(R.color.grey));
-    toast.show();
-  }
-
   @Override public void clickedGetRates() {
     String srcToken = getString(R.string.RopstenEther);
     String destToken = getString(R.string.RopstenAppCoins);
-    String tokenAmount = etSrcAmount.getText()
+    String tokenAmount = amountFromView.getText()
         .toString();
 
     presenter.getRates(srcToken, destToken, tokenAmount);
@@ -128,11 +110,14 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
   }
 
   @Override public void clickedSwap() {
-    String srcToken = getString(R.string.RopstenEther);
-    String destToken = getString(R.string.RopstenAppCoins);
+    String srcToken = getAddresses(sTokenFrom.getSelectedItem()
+        .toString());
+    String destToken = getAddresses(sTokenTo.getSelectedItem()
+        .toString());
     String amount = amountFromView.getText()
         .toString();
     String toAddress = getString(R.string.RopstenKyberNetworkProxy);
+    String approveAddress = getString(R.string.RopstenKyberNetworkProxy);
 
     String tokenNameFrom = sTokenFrom.getSelectedItem()
         .toString();
@@ -154,21 +139,18 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
             + tokenNameTo
             + " ?")
         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
           @Override public void onClick(DialogInterface dialog, int which) {
             //Do Something Here
-            presenter.swapEtherToToken(srcToken, destToken, amount, toAddress, showTxHash);
+            presenter.swap(srcToken, destToken, amount, toAddress, approveAddress);
+            //presenter.swapEtherToToken(srcToken, destToken, amount, toAddress, showTxHash);
           }
         })
         .setNegativeButton("No", new DialogInterface.OnClickListener() {
-
           @Override public void onClick(DialogInterface dialog, int which) {
             //Do Something Here
           }
         })
         .show();
-
-
   }
 
   @Override public void setTextTokenTo(String amount) {
@@ -183,12 +165,19 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
     amountFromView.addTextChangedListener(textWatcherFrom);
   }
 
+  @Override public void showToast() {
+    Toast toast = Toast.makeText(this, /*getString(R.string.swap_sent)*/ "test", Toast.LENGTH_LONG);
+    toast.getView()
+        .setBackgroundColor(getResources().getColor(R.color.grey));
+    toast.show();
+  }
+
   @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
     // An item was selected. You can retrieve the selected item using
     // parent.getItemAtPosition(pos)
-    String tokenFromAddress = get_addresses(sTokenFrom.getSelectedItem()
+    String tokenFromAddress = getAddresses(sTokenFrom.getSelectedItem()
         .toString());
-    String tokenToAddress = get_addresses(sTokenTo.getSelectedItem()
+    String tokenToAddress = getAddresses(sTokenTo.getSelectedItem()
         .toString());
 
     presenter.showRatio(sTokenFrom.getSelectedItem()
@@ -200,7 +189,7 @@ public class SwapEtherToTokenActivity extends AppCompatActivity
 
   }
 
-  public String get_addresses(String token) {
+  public String getAddresses(String token) {
     String address = "";
     switch (token) {
       case "KNC":

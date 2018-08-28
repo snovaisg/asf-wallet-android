@@ -62,10 +62,19 @@ public class SwapTransactionFactory {
   }
 
   private long getNonce(String address) throws IOException {
-    return web3jProvider.getDefault()
+    DataHolder dh = new DataHolder().getInstance();
+    long nonce = web3jProvider.getDefault()
         .ethGetTransactionCount(address, DefaultBlockParameterName.LATEST)
         .send()
         .getTransactionCount()
         .longValue();
+
+    // transaction was made shortly after previous transaction
+    // and nonce hasn't been updated in the network yet
+    if (dh.getNonce() == nonce) {
+      nonce = nonce + 1;
+    }
+    dh.setNonce(nonce);
+    return nonce;
   }
 }

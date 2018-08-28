@@ -27,6 +27,19 @@ public class SwapDataMapper {
     return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
   }
 
+  public byte[] getDataSwapTokenToEther(SwapProof swapProof) {
+    Address srcToken = new Address(swapProof.getSrcToken());
+    Uint srcQnty = new Uint(swapProof.getTokenAmount()
+        .toBigInteger());
+    Uint minConversionRate = new Uint(BigInteger.ZERO);
+    List<Type> params = Arrays.asList(srcToken, srcQnty, minConversionRate);
+    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Bool>() {
+    });
+    Function function = new Function("swapTokenToEther", params, returnTypes);
+    String encodedFunction = FunctionEncoder.encode(function);
+    return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
+  }
+
   public Function getDataExpectedRate(SwapProof swapProof) {
     Address srcToken = new Address(swapProof.getSrcToken());
     Address destToken = new Address(swapProof.getDestToken());
@@ -40,7 +53,7 @@ public class SwapDataMapper {
   }
 
   public byte[] getDataApprove(SwapProof swapProof) {
-    String spender = swapProof.getToAddress();
+    String spender = swapProof.getApproveAddress();
     BigDecimal amount = swapProof.getTokenAmount();
     Log.d("swapLog2", "amount = " + String.valueOf(amount));
     List<Type> params = Arrays.asList(new Address(spender), new Uint(amount.toBigInteger()));
@@ -49,5 +62,15 @@ public class SwapDataMapper {
     Function function = new Function("approve", params, returnTypes);
     String encodedFunction = FunctionEncoder.encode(function);
     return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
+  }
+
+  public Function getDataAllowance(SwapProof swapProof) {
+    String owner = swapProof.getSrcToken();
+    String spender = swapProof.getDestToken();
+    List<Type> params = Arrays.asList(new Address(owner), new Address(spender));
+    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Uint>() {
+    });
+    Function function = new Function("allowance", params, returnTypes);
+    return function;
   }
 }
