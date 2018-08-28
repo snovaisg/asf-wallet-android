@@ -17,7 +17,6 @@ public class SwapProof {
   private String srcToken;
   private String destToken;
   private Float minConversionRate;
-  private Object result;
   private byte[] data;
   private Function function;
 
@@ -131,13 +130,5 @@ public class SwapProof {
 
   public void setFunction(Function function) {
     this.function = function;
-  }
-  
-  public Object getResult() {
-    return result;
-  }
-
-  public void setResult(Object result) {
-    this.result = result;
   }
 }
