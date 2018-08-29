@@ -73,4 +73,18 @@ public class SwapDataMapper {
     Function function = new Function("allowance", params, returnTypes);
     return function;
   }
+
+  public byte[] getDataSwapTokenToToken(SwapProof swapProof) {
+    Address srcToken = new Address(swapProof.getSrcToken());
+    Address destToken = new Address(swapProof.getDestToken());
+    Uint srcQnty = new Uint(swapProof.getTokenAmount()
+        .toBigInteger());
+    Uint minConversionRate = new Uint(BigInteger.ZERO);
+    List<Type> params = Arrays.asList(srcToken, srcQnty, destToken, minConversionRate);
+    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Bool>() {
+    });
+    Function function = new Function("swapTokenToToken", params, returnTypes);
+    String encodedFunction = FunctionEncoder.encode(function);
+    return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
+  }
 }

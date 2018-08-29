@@ -93,4 +93,19 @@ public class SwapInteractor {
     BigDecimal allowance = Convert.fromWei(allowanceWei.toString(), Convert.Unit.ETHER);
     return allowance.floatValue();
   }
+
+  public void swapTokenToToken(String srcToken, String destToken, String amount, String toAddress,
+      ResponseListener<String> listener) {
+    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+    swapProof.setSrcToken(srcToken);
+    swapProof.setDestToken(destToken);
+    swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
+    swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
+    swapProof.setToAddress(toAddress);
+    swapProof.setData(swapDataMapper.getDataSwapTokenToToken(swapProof));
+    swapProof.setGasPrice(Convert.toWei("25", Convert.Unit.GWEI));
+    swapProof.setGasLimit(BigDecimal.valueOf(400000));
+    swapBlockchainWriter.setListener(listener);
+    swapBlockchainWriter.writeSwapProof(swapProof);
+  }
 }

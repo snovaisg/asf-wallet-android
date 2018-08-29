@@ -90,14 +90,44 @@ public class SwapPresenter {
     return 0;
   }
 
-  public void swap(String srcToken, String destToken, String amount, String toAddress,
-      String approveAddress) {
+  public void swap(String srcToken, String destToken, String amount, String toAddress, String approveAddress) {
     String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    //ether to token
     if (srcToken.equals(ether_add)) {
       swapEtherToToken(destToken, amount, toAddress);
-    } else if ((!srcToken.equals(ether_add)) && (destToken.equals(ether_add))) {
+    }
+    //token to ether
+    else if ((!srcToken.equals(ether_add)) && (destToken.equals(ether_add))) {
       swapTokenToEther(srcToken, destToken, amount, toAddress, approveAddress);
     }
+    //token to token
+    else if ((!srcToken.equals(ether_add)) && (!destToken.equals(ether_add))) {
+      swapTokenToToken(srcToken, destToken, amount, toAddress, approveAddress);
+    }
+  }
+
+  private void swapTokenToToken(String srcToken, String destToken, String amount, String toAddress,
+      String approveAddress) {
+    float allowance = checkAllowance(approveAddress, srcToken);
+    if (allowance >= Float.parseFloat(amount)) {
+      swapInteractor.swapTokenToToken(srcToken, destToken, amount, toAddress,
+          transactionSentListener);
+    }
+    swapTokenToTokenApprove(srcToken, destToken, amount, toAddress, approveAddress);
+  }
+
+  private void swapTokenToTokenApprove(String srcToken, String destToken, String amount,
+      String toAddress, String approveAddress) {
+    resListenner = new ResponseListener() {
+      @Override public void onResponse(Object o) {
+        callSwapTokenToToken(srcToken, destToken, amount, toAddress, transactionSentListener);
+      }
+
+      @Override public void onError(Throwable error) {
+        error.printStackTrace();
+      }
+    };
+    swapInteractor.approve(srcToken, destToken, amount, approveAddress, resListenner);
   }
 
   public void swapTokenToEther(String srcToken, String destToken, String amount, String toAddress,
@@ -118,6 +148,11 @@ public class SwapPresenter {
   public void callSwapTokenToEther(String srcToken, String destToken, String amount,
       String toAddress, ResponseListener<String> listenner) {
     swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, listenner);
+  }
+
+  public void callSwapTokenToToken(String srcToken, String destToken, String amount,
+      String toAddress, ResponseListener<String> listenner) {
+    swapInteractor.swapTokenToToken(srcToken, destToken, amount, toAddress, listenner);
   }
 
 }
