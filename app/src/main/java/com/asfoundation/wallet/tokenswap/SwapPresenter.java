@@ -16,7 +16,6 @@ public class SwapPresenter {
     this.swapInteractor = swapInteractor;
     this.transactionSentListener = new ResponseListener<String>() {
       @Override public void onResponse(String s) {
-        //view.showToast(); //está a dar erro io.reactivex.exceptions.UndeliverableException: java.lang.RuntimeException: Can't toast on a thread that has not called Looper.prepare()
       }
 
       @Override public void onError(Throwable error) {
@@ -126,14 +125,12 @@ public class SwapPresenter {
   }
 
   public float checkAllowance(String spender, String toAddress) {
-    //get owner
-    String owner = "0xa0d484a943dad7ef23dbc6a4acd3a005f530106e"; //hack hardcoded
-    return swapInteractor.getAllowance(owner, spender, toAddress);
+    return swapInteractor.getAllowance(spender, toAddress);
   }
 
   public void callSwapTokenToEther(String srcToken, String destToken, String amount,
       String toAddress, ResponseListener<String> listenner) {
-    swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, transactionSentListener);
+    swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, listenner);
   }
 
 }

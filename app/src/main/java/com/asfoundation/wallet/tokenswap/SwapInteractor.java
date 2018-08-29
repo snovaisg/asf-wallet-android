@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.tokenswap;
 
+import com.asfoundation.wallet.repository.WalletRepositoryType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.web3j.utils.Convert;
@@ -9,12 +10,14 @@ public class SwapInteractor {
   private final SwapDataMapper swapDataMapper;
   private SwapProofFactory swapProofFactory;
   private SwapRates swapRates;
+  private WalletRepositoryType walletRepositoryType;
 
   public SwapInteractor(SwapProofWriter swapBlockchainWriter, SwapDataMapper swapDataMapper,
-      SwapRates swapRates) {
+      SwapRates swapRates, WalletRepositoryType walletRepositoryType) {
     this.swapBlockchainWriter = swapBlockchainWriter;
     this.swapDataMapper = swapDataMapper;
     this.swapRates = swapRates;
+    this.walletRepositoryType = walletRepositoryType;
     this.swapProofFactory = new SwapProofFactory();
   }
 
@@ -75,10 +78,12 @@ public class SwapInteractor {
     swapBlockchainWriter.writeSwapProof(swapProof);
   }
 
-  public float getAllowance(String owner, String spender, String toAddress) {
+  public float getAllowance(String spender, String toAddress) {
 
     SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setSrcToken(owner);
+    String ownder = walletRepositoryType.getDefaultWallet()
+        .blockingGet().address.toString();
+    swapProof.setSrcToken(ownder);
     swapProof.setDestToken(spender);
     swapProof.setToAddress(toAddress);
     swapProof.setFunction(swapDataMapper.getDataAllowance(swapProof));

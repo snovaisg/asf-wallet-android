@@ -2,6 +2,7 @@ package com.asfoundation.wallet.tokenswap;
 
 import android.annotation.SuppressLint;
 import com.asfoundation.wallet.repository.TransactionException;
+import com.asfoundation.wallet.repository.WalletRepositoryType;
 import com.asfoundation.wallet.repository.Web3jProvider;
 import io.reactivex.Single;
 import io.reactivex.annotations.Nullable;
@@ -28,17 +29,19 @@ public class SwapBlockchainWriter implements SwapProofWriter {
 
   private final Web3jProvider web3jProvider;
   private final SwapTransactionFactory swapTransactionFactory;
-  private SwapDataMapper swapDataMapper;
   private ResponseListener resL;
+  private WalletRepositoryType walletRepositoryType;
 
   public SwapBlockchainWriter(Web3jProvider web3jProvider,
-      SwapTransactionFactory swapTransactionFactory, SwapDataMapper swapDataMapper) {
+      SwapTransactionFactory swapTransactionFactory, WalletRepositoryType walletRepositoryType) {
     this.web3jProvider = web3jProvider;
     this.swapTransactionFactory = swapTransactionFactory;
-    this.swapDataMapper = swapDataMapper;
+    this.walletRepositoryType = walletRepositoryType;
   }
 
   @SuppressLint("CheckResult") @Override public void writeSwapProof(SwapProof swapProof) {
+    walletRepositoryType.getDefaultWallet()
+        .blockingGet().address.toString();
     swapTransactionFactory.createTransaction(swapProof)
         .flatMap(this::sendTransaction)
         .subscribe(new Consumer<Object>() {
@@ -58,7 +61,8 @@ public class SwapBlockchainWriter implements SwapProofWriter {
 
   //writes Transactions that are only query from the blockchain
   @Override public BigInteger writeGetterSwapProof(SwapProof swapProof) {
-    String from = swapProof.getFromAddress();
+    String from = walletRepositoryType.getDefaultWallet()
+        .blockingGet().address.toString();
     String to = swapProof.getToAddress();
     Function function = swapProof.getFunction();
     String encodedFunction = FunctionEncoder.encode(function);

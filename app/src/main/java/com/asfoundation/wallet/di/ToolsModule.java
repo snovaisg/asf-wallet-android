@@ -360,11 +360,13 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
   }
 
   @Singleton @Provides SwapProofWriter provideSwapBlockChainWriter(Web3jProvider web3jProvider,
-      SwapTransactionFactory swapTransactionFactory) {
-    return new SwapBlockchainWriter(web3jProvider, swapTransactionFactory, new SwapDataMapper());
+      SwapTransactionFactory swapTransactionFactory, WalletRepositoryType walletRepository) {
+    return new SwapBlockchainWriter(web3jProvider, swapTransactionFactory, walletRepository);
   }
 
-  @Singleton @Provides SwapInteractor provideSwapInteractor(SwapProofWriter swapBlockchainWriter) {
-    return new SwapInteractor(swapBlockchainWriter, new SwapDataMapper(), new SwapRates());
+  @Singleton @Provides SwapInteractor provideSwapInteractor(SwapProofWriter swapBlockchainWriter,
+      WalletRepositoryType walletRepositoryType) {
+    return new SwapInteractor(swapBlockchainWriter, new SwapDataMapper(), new SwapRates(),
+        walletRepositoryType);
   }
 }
