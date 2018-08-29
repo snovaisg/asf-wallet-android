@@ -47,7 +47,7 @@ public class SwapInteractor {
     swapBlockchainWriter.writeSwapProof(swapProof);
   }
 
-  public void tokenToEther(String srcToken, String destToken, String amount, String toAddress,
+  public void swapTokenToEther(String srcToken, String destToken, String amount, String toAddress,
       ResponseListener listener) {
     SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
     swapProof.setSrcToken(srcToken);

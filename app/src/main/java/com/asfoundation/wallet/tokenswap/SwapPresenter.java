@@ -32,7 +32,8 @@ public class SwapPresenter {
       String ToAddress, String approveAddress) {
     resListenner = new ResponseListener() {
       @Override public void onResponse(Object o) {
-        callSwapTokenToEther(srcToken, destToken, amount, ToAddress, transactionSentListener);
+        swapInteractor.swapTokenToEther(srcToken, destToken, amount, ToAddress,
+            transactionSentListener);
       }
 
       @Override public void onError(Throwable error) {
@@ -105,6 +106,20 @@ public class SwapPresenter {
       swapTokenToToken(srcToken, destToken, amount, toAddress, approveAddress);
     }
   }
+  private void swapTokenToTokenApprove(String srcToken, String destToken, String amount,
+      String toAddress, String approveAddress) {
+    resListenner = new ResponseListener() {
+      @Override public void onResponse(Object o) {
+        swapInteractor.swapTokenToToken(srcToken, destToken, amount, toAddress,
+            transactionSentListener);
+      }
+
+      @Override public void onError(Throwable error) {
+        error.printStackTrace();
+      }
+    };
+    swapInteractor.approve(srcToken, destToken, amount, approveAddress, resListenner);
+  }
 
   private void swapTokenToToken(String srcToken, String destToken, String amount, String toAddress,
       String approveAddress) {
@@ -116,25 +131,13 @@ public class SwapPresenter {
     swapTokenToTokenApprove(srcToken, destToken, amount, toAddress, approveAddress);
   }
 
-  private void swapTokenToTokenApprove(String srcToken, String destToken, String amount,
-      String toAddress, String approveAddress) {
-    resListenner = new ResponseListener() {
-      @Override public void onResponse(Object o) {
-        callSwapTokenToToken(srcToken, destToken, amount, toAddress, transactionSentListener);
-      }
-
-      @Override public void onError(Throwable error) {
-        error.printStackTrace();
-      }
-    };
-    swapInteractor.approve(srcToken, destToken, amount, approveAddress, resListenner);
-  }
 
   public void swapTokenToEther(String srcToken, String destToken, String amount, String toAddress,
       String approveAddress) {
     float allowance = checkAllowance(approveAddress, srcToken);
     if (allowance >= Float.parseFloat(amount)) {
-      swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, transactionSentListener);
+      swapInteractor.swapTokenToEther(srcToken, destToken, amount, toAddress,
+          transactionSentListener);
     } else {
       //need to approve first
       swapTokenToEtherApprove(srcToken, destToken, amount, toAddress, approveAddress);
@@ -145,14 +148,6 @@ public class SwapPresenter {
     return swapInteractor.getAllowance(spender, toAddress);
   }
 
-  public void callSwapTokenToEther(String srcToken, String destToken, String amount,
-      String toAddress, ResponseListener<String> listenner) {
-    swapInteractor.tokenToEther(srcToken, destToken, amount, toAddress, listenner);
-  }
 
-  public void callSwapTokenToToken(String srcToken, String destToken, String amount,
-      String toAddress, ResponseListener<String> listenner) {
-    swapInteractor.swapTokenToToken(srcToken, destToken, amount, toAddress, listenner);
-  }
 
 }
