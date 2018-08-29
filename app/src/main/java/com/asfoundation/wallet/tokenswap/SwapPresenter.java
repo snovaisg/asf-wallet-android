@@ -42,19 +42,6 @@ public class SwapPresenter {
     swapInteractor.approve(srcToken, destToken, amount, approveAddress, resListenner);
   }
 
-  public void getRates(String srcToken, String destToken, String tokenAmount) {
-    // fetch rates 1:1
-    if (tokenAmount.isEmpty()) tokenAmount = "1";
-    BigInteger rateWei = swapInteractor.getRates(srcToken, destToken, tokenAmount);
-    // Convert to UI/UX
-    Float amount = Float.parseFloat(tokenAmount);
-    Float swapValueWei = rateWei.floatValue() * amount;
-    String swapValueWeiStr = swapValueWei.toString();
-    BigDecimal swapValueEth = Convert.fromWei(swapValueWeiStr, Convert.Unit.ETHER);
-    String swapValueEthStr = swapValueEth.toString();
-    view.showRates(swapValueEthStr);
-  }
-
   public void showRatio(String srcToken, String destToken, String srcTokenAddress,
       String destTokenAddress) {
     String tokenAmount = "1";

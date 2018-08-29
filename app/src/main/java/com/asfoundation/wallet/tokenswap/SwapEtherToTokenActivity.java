@@ -92,18 +92,7 @@ public class SwapEtherToTokenActivity extends BaseActivity
     };
     amountFromView.addTextChangedListener(textWatcherFrom);
     amountToView.addTextChangedListener(textWatcherTo);
-    clickedGetRates();
   }
-
-  @Override public void clickedGetRates() {
-    String srcToken = getString(R.string.RopstenEther);
-    String destToken = getString(R.string.RopstenAppCoins);
-    String tokenAmount = amountFromView.getText()
-        .toString();
-
-    presenter.getRates(srcToken, destToken, tokenAmount);
-  }
-
 
   @Override public void showRates(String rates) {
     tvShowRates.setText(rates);
