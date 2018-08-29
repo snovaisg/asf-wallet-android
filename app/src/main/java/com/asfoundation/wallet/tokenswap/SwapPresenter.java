@@ -148,6 +148,17 @@ public class SwapPresenter {
     return swapInteractor.getAllowance(spender, toAddress);
   }
 
-
-
+  public void updateBalances(String tokenFrom, String tokenTo) {
+    String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    if (tokenFrom.equals(ether_add)) {
+      BigInteger amount = swapInteractor.getEtherBalance();
+    } else {
+      BigInteger amountFromWei = swapInteractor.getBalance(tokenFrom);
+    }
+    if (tokenTo.equals(ether_add)) {
+      BigInteger amountToWei = swapInteractor.getEtherBalance();
+    } else {
+      BigInteger amountToWei = swapInteractor.getBalance(tokenTo);
+    }
+  }
 }

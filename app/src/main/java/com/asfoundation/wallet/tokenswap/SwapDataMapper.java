@@ -87,4 +87,13 @@ public class SwapDataMapper {
     String encodedFunction = FunctionEncoder.encode(function);
     return Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(encodedFunction));
   }
+
+  public Function getBalanceOf(SwapProof swapProof) {
+    Address src = new Address(swapProof.getFromAddress());
+    List<Type> params = Arrays.asList(src);
+    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Uint>() {
+    });
+    Function function = new Function("balanceOf", params, returnTypes);
+    return function;
+  }
 }

@@ -127,14 +127,13 @@ public class SwapEtherToTokenActivity extends BaseActivity
             + " "
             + tokenNameTo
             + " ?")
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             //Do Something Here
             presenter.swap(srcToken, destToken, amount, toAddress, approveAddress);
-            //presenter.swapEtherToToken(srcToken, destToken, amount, toAddress, showTxHash);
           }
         })
-        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+        .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             //Do Something Here
           }
@@ -177,10 +176,12 @@ public class SwapEtherToTokenActivity extends BaseActivity
       case R.id.spinnerFrom:
         presenter.amountChanged(tokenFromAddress, tokenToAddress, amountFromView.getText()
             .toString(), from);
+        presenter.updateBalances(tokenFromAddress, tokenToAddress);
         break;
       case R.id.spinnerTo:
         presenter.amountChanged(tokenFromAddress, tokenToAddress, amountToView.getText()
             .toString(), to);
+        presenter.updateBalances(tokenFromAddress, tokenToAddress);
         break;
     }
   }

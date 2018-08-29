@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.tokenswap;
 
+import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.repository.WalletRepositoryType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -107,5 +108,25 @@ public class SwapInteractor {
     swapProof.setGasLimit(BigDecimal.valueOf(400000));
     swapBlockchainWriter.setListener(listener);
     swapBlockchainWriter.writeSwapProof(swapProof);
+  }
+
+  public BigInteger getBalance(String contractAddress) {
+    String address = walletRepositoryType.getDefaultWallet()
+        .blockingGet().address.toString();
+    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+    swapProof.setFromAddress(address);
+    swapProof.setFunction(swapDataMapper.getBalanceOf(swapProof));
+    swapProof.setToAddress(contractAddress);
+    BigInteger balance = swapBlockchainWriter.writeGetterSwapProof(swapProof);
+    return balance;
+  }
+
+  public BigInteger getEtherBalance() {
+    Wallet wallet = walletRepositoryType.getDefaultWallet()
+        .blockingGet();
+    BigInteger balance = walletRepositoryType.balanceInWei(wallet, 3)
+        .blockingGet()
+        .toBigInteger();
+    return balance;
   }
 }
