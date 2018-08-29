@@ -172,6 +172,17 @@ public class SwapEtherToTokenActivity extends BaseActivity
     presenter.showRatio(sTokenFrom.getSelectedItem()
         .toString(), sTokenTo.getSelectedItem()
         .toString(), tokenFromAddress, tokenToAddress);
+
+    switch (parent.getId()) {
+      case R.id.spinnerFrom:
+        presenter.amountChanged(tokenFromAddress, tokenToAddress, amountFromView.getText()
+            .toString(), from);
+        break;
+      case R.id.spinnerTo:
+        presenter.amountChanged(tokenFromAddress, tokenToAddress, amountToView.getText()
+            .toString(), to);
+        break;
+    }
   }
 
   @Override public void onNothingSelected(AdapterView<?> parent) {
