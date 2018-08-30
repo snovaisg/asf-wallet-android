@@ -40,8 +40,6 @@ public class SwapBlockchainWriter implements SwapProofWriter {
   }
 
   @SuppressLint("CheckResult") @Override public void writeSwapProof(SwapProof swapProof) {
-    walletRepositoryType.getDefaultWallet()
-        .blockingGet().address.toString();
     swapTransactionFactory.createTransaction(swapProof)
         .flatMap(this::sendTransaction)
         .subscribe(new Consumer<Object>() {
