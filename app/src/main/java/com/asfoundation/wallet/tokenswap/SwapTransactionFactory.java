@@ -71,8 +71,8 @@ public class SwapTransactionFactory {
 
     // transaction was made shortly after previous transaction
     // and nonce hasn't been updated in the network yet
-    if (dh.getNonce() == nonce) {
-      nonce = nonce + 1;
+    if (dh.getNonce() != -1) {
+      nonce = dh.getNonce() + 1;
     }
     dh.setNonce(nonce);
     return nonce;

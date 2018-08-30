@@ -148,17 +148,32 @@ public class SwapPresenter {
     return swapInteractor.getAllowance(spender, toAddress);
   }
 
-  public void updateBalances(String tokenFrom, String tokenTo) {
+  public void updateBalances(String tokenFrom, String tokenFromName, String tokenTo,
+      String tokenToName) {
     String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    BigInteger amountFromWei;
+    BigInteger amountToWei;
     if (tokenFrom.equals(ether_add)) {
-      BigInteger amount = swapInteractor.getEtherBalance();
+      amountFromWei = swapInteractor.getEtherBalance();
     } else {
-      BigInteger amountFromWei = swapInteractor.getBalance(tokenFrom);
+      amountFromWei = swapInteractor.getBalance(tokenFrom);
     }
     if (tokenTo.equals(ether_add)) {
-      BigInteger amountToWei = swapInteractor.getEtherBalance();
+      amountToWei = swapInteractor.getEtherBalance();
     } else {
-      BigInteger amountToWei = swapInteractor.getBalance(tokenTo);
+      amountToWei = swapInteractor.getBalance(tokenTo);
     }
+    BigDecimal amountFromEther = Convert.fromWei(amountFromWei.toString(), Convert.Unit.ETHER);
+    BigDecimal amountToEther = Convert.fromWei(amountToWei.toString(), Convert.Unit.ETHER);
+
+    String text = "balance\n"
+        + tokenFromName
+        + " "
+        + amountFromEther.toString()
+        + "\n"
+        + tokenToName
+        + " "
+        + amountToEther.toString();
+    view.showBalances(text);
   }
 }
