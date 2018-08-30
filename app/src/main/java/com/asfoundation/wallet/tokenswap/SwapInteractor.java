@@ -4,7 +4,12 @@ import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.repository.WalletRepositoryType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.core.methods.response.EthGasPrice;
+import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
+import rx.schedulers.Schedulers;
 
 public class SwapInteractor {
   private final SwapProofWriter swapBlockchainWriter;
@@ -38,45 +43,59 @@ public class SwapInteractor {
 
   public void swapEtherToToken(String destToken, String amount, String ToAddress,
       ResponseListener listener) {
-    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setDestToken(destToken);
-    swapProof.setAmount(Convert.toWei(amount, Convert.Unit.ETHER));
-    swapProof.setToAddress(ToAddress);
-    swapProof.setData(swapDataMapper.getDataSwapEtherToToken(swapProof));
+    getGasPrice().subscribeOn(Schedulers.newThread())
+        .subscribe(gas -> {
+          SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+          swapProof.setDestToken(destToken);
+          swapProof.setAmount(Convert.toWei(amount, Convert.Unit.ETHER));
+          swapProof.setToAddress(ToAddress);
+          swapProof.setData(swapDataMapper.getDataSwapEtherToToken(swapProof));
+          swapProof.setGasPrice(Convert.toWei(gas.getGasPrice()
+              .toString(), Convert.Unit.WEI));
+          swapProof.setGasLimit(BigDecimal.valueOf(400000));
 
-    swapBlockchainWriter.setListener(listener);
-    swapBlockchainWriter.writeSwapProof(swapProof);
+          swapBlockchainWriter.setListener(listener);
+          swapBlockchainWriter.writeSwapProof(swapProof);
+        }, Throwable::printStackTrace);
   }
 
   public void swapTokenToEther(String srcToken, String destToken, String amount, String toAddress,
       ResponseListener listener) {
-    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setSrcToken(srcToken);
-    swapProof.setDestToken(destToken);
-    swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
-    swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
-    swapProof.setToAddress(toAddress);
-    swapProof.setData(swapDataMapper.getDataSwapTokenToEther(swapProof));
-    swapProof.setGasPrice(Convert.toWei("25", Convert.Unit.GWEI));
-    swapProof.setGasLimit(BigDecimal.valueOf(400000));
-    swapBlockchainWriter.setListener(listener);
-    swapBlockchainWriter.writeSwapProof(swapProof);
+    getGasPrice().subscribeOn(Schedulers.newThread())
+        .subscribe(gas -> {
+          SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+          swapProof.setSrcToken(srcToken);
+          swapProof.setDestToken(destToken);
+          swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
+          swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
+          swapProof.setToAddress(toAddress);
+          swapProof.setData(swapDataMapper.getDataSwapTokenToEther(swapProof));
+          swapProof.setGasPrice(Convert.toWei(gas.getGasPrice()
+              .toString(), Convert.Unit.WEI));
+          swapProof.setGasLimit(BigDecimal.valueOf(400000));
+          swapBlockchainWriter.setListener(listener);
+          swapBlockchainWriter.writeSwapProof(swapProof);
+        }, Throwable::printStackTrace);
   }
 
   public void approve(String srcToken, String destToken, String amount, String approveAddress,
       ResponseListener listener) {
-    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setSrcToken(srcToken);
-    swapProof.setDestToken(destToken);
-    swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
-    swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
-    swapProof.setToAddress(srcToken);
-    swapProof.setApproveAddress(approveAddress);
+    getGasPrice().subscribeOn(Schedulers.newThread())
+        .subscribe(gas -> {
+          SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+          swapProof.setSrcToken(srcToken);
+          swapProof.setDestToken(destToken);
+          swapProof.setGasPrice(Convert.toWei(gas.getGasPrice()
+              .toString(), Convert.Unit.WEI));
+          swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
+          swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
+          swapProof.setToAddress(srcToken);
+          swapProof.setApproveAddress(approveAddress);
 
-    swapProof.setData(swapDataMapper.getDataApprove(swapProof));
-
-    swapBlockchainWriter.setListener(listener);
-    swapBlockchainWriter.writeSwapProof(swapProof);
+          swapProof.setData(swapDataMapper.getDataApprove(swapProof));
+          swapBlockchainWriter.setListener(listener);
+          swapBlockchainWriter.writeSwapProof(swapProof);
+        }, Throwable::printStackTrace);
   }
 
   public float getAllowance(String spender, String toAddress) {
@@ -97,17 +116,21 @@ public class SwapInteractor {
 
   public void swapTokenToToken(String srcToken, String destToken, String amount, String toAddress,
       ResponseListener<String> listener) {
-    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setSrcToken(srcToken);
-    swapProof.setDestToken(destToken);
-    swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
-    swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
-    swapProof.setToAddress(toAddress);
-    swapProof.setData(swapDataMapper.getDataSwapTokenToToken(swapProof));
-    swapProof.setGasPrice(Convert.toWei("25", Convert.Unit.GWEI));
-    swapProof.setGasLimit(BigDecimal.valueOf(400000));
-    swapBlockchainWriter.setListener(listener);
-    swapBlockchainWriter.writeSwapProof(swapProof);
+    getGasPrice().subscribeOn(Schedulers.newThread())
+        .subscribe(gas -> {
+          SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+          swapProof.setSrcToken(srcToken);
+          swapProof.setDestToken(destToken);
+          swapProof.setTokenAmount(Convert.toWei(amount, Convert.Unit.ETHER));
+          swapProof.setAmount(Convert.toWei("0", Convert.Unit.ETHER));
+          swapProof.setToAddress(toAddress);
+          swapProof.setData(swapDataMapper.getDataSwapTokenToToken(swapProof));
+          swapProof.setGasPrice(Convert.toWei(gas.getGasPrice()
+              .toString(), Convert.Unit.WEI));
+          swapProof.setGasLimit(BigDecimal.valueOf(400000));
+          swapBlockchainWriter.setListener(listener);
+          swapBlockchainWriter.writeSwapProof(swapProof);
+        }, Throwable::printStackTrace);
   }
 
   public BigInteger getBalance(String contractAddress) {
@@ -128,5 +151,12 @@ public class SwapInteractor {
         .blockingGet()
         .toBigInteger();
     return balance;
+  }
+
+  public rx.Observable<EthGasPrice> getGasPrice() {
+    Web3j web3 =
+        new Web3jFactory().build(new HttpService("https://ropsten.infura.io/iY5eRaUoUfxTNNfCDKRh"));
+    return web3.ethGasPrice()
+        .observable();
   }
 }
