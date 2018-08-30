@@ -5,15 +5,6 @@ import android.util.Log;
 import io.reactivex.schedulers.Schedulers;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.web3j.abi.FunctionReturnDecoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.Uint;
 import org.web3j.utils.Convert;
 
 public class SwapPresenter {
@@ -194,22 +185,9 @@ public class SwapPresenter {
     swapInteractor.rxGetBalance(contractAddress)
         .subscribeOn(Schedulers.newThread())
         .subscribe(x -> {
-          SwapProof swapProof = new SwapProofFactory().createDefaultSwapProof();
-          swapProof.setFromAddress("0x1c3A8cD7eDEb12f54ac02Fa22Bf4620f65e9a2c7");
-          Function function = getBalanceOf(swapProof);
-          List<Type> response =
-              FunctionReturnDecoder.decode(x.getValue(), function.getOutputParameters());
-          BigInteger result = ((Uint) response.get(0)).getValue();
-          Log.d("swapLog7", "result is " + result.toString());
+          BigInteger balanceWei = swapInteractor.getResponseResult(x, contractAddress);
+          Log.d("swapLog7", "result is " + balanceWei.toString());
         });
   }
 
-  public Function getBalanceOf(SwapProof swapProof) {
-    Address src = new Address(swapProof.getFromAddress());
-    List<Type> params = Arrays.asList(src);
-    List<TypeReference<?>> returnTypes = Collections.singletonList(new TypeReference<Uint>() {
-    });
-    Function function = new Function("balanceOf", params, returnTypes);
-    return function;
-  }
 }

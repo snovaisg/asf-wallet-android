@@ -5,6 +5,11 @@ import com.asfoundation.wallet.repository.WalletRepositoryType;
 import io.reactivex.Single;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Uint;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.methods.response.EthCall;
@@ -174,5 +179,14 @@ public class SwapInteractor {
         });
   }
 
-
+  public BigInteger getResponseResult(EthCall ethCall, String contractAddress) {
+    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+    swapProof.setFromAddress(contractAddress);
+    Function function = swapDataMapper.getBalanceOf(swapProof);
+    swapDataMapper.getBalanceOf(swapProof);
+    List<Type> response =
+        FunctionReturnDecoder.decode(ethCall.getValue(), function.getOutputParameters());
+    BigInteger result = ((Uint) response.get(0)).getValue();
+    return result;
+  }
 }
