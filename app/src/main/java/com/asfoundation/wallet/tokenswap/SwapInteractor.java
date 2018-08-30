@@ -2,10 +2,12 @@ package com.asfoundation.wallet.tokenswap;
 
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.repository.WalletRepositoryType;
+import io.reactivex.Single;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
@@ -159,4 +161,18 @@ public class SwapInteractor {
     return web3.ethGasPrice()
         .observable();
   }
+
+  public Single<EthCall> rxGetBalance(String contractAddress) {
+    return walletRepositoryType.getDefaultWallet()
+        .subscribeOn(io.reactivex.schedulers.Schedulers.newThread())
+        .flatMap(wallet -> {
+          SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+          swapProof.setFromAddress(wallet.address.toString());
+          swapProof.setFunction(swapDataMapper.getBalanceOf(swapProof));
+          swapProof.setToAddress(contractAddress);
+          return swapBlockchainWriter.rxWriteGetterSwapProof(swapProof);
+        });
+  }
+
+
 }

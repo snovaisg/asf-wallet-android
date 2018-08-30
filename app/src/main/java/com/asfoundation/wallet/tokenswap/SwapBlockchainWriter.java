@@ -7,6 +7,7 @@ import com.asfoundation.wallet.repository.Web3jProvider;
 import io.reactivex.Single;
 import io.reactivex.annotations.Nullable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -86,6 +87,21 @@ public class SwapBlockchainWriter implements SwapProofWriter {
       e.printStackTrace();
     }
     return BigInteger.ZERO;
+  }
+
+  @Override public Single<EthCall> rxWriteGetterSwapProof(SwapProof swapProof) {
+    return walletRepositoryType.getDefaultWallet()
+        .subscribeOn(Schedulers.newThread())
+        .flatMap(wallet -> {
+          String to = swapProof.getToAddress();
+          Function function = swapProof.getFunction();
+          String encodedFunction = FunctionEncoder.encode(function);
+          Transaction ethCallTransaction =
+              createEthCallTransaction(wallet.address.toString(), to, encodedFunction);
+          return Single.just(web3jProvider.get(swapProof.getChainId())
+              .ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST)
+              .send());
+        });
   }
 
   private Single<String> sendTransaction(byte[] transaction) {
