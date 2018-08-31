@@ -98,7 +98,6 @@ public class SwapEtherToTokenActivity extends BaseActivity
             .toString());
         String destTokenAddress = getAddresses(sTokenTo.getSelectedItem()
             .toString());
-        //presenter.amountChanged(srcTokenAddress, destTokenAddress, textBox.toString(), to);
         try {
           presenter.rxAmountChanged(srcTokenAddress, destTokenAddress, textBox.toString(), to);
         } catch (IOException e) {
@@ -178,43 +177,42 @@ public class SwapEtherToTokenActivity extends BaseActivity
     String tokenToAddress = getAddresses(sTokenTo.getSelectedItem()
         .toString());
 
-    presenter.showRatio(sTokenFrom.getSelectedItem()
-        .toString(), sTokenTo.getSelectedItem()
-        .toString(), tokenFromAddress, tokenToAddress);
+    try {
+      presenter.showRatio(sTokenFrom.getSelectedItem()
+          .toString(), sTokenTo.getSelectedItem()
+          .toString(), tokenFromAddress, tokenToAddress);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    presenter.rxUpdateBalance(tokenFromAddress, sTokenFrom.getSelectedItem()
+        .toString(), "FROM");
+    presenter.rxUpdateBalance(tokenToAddress, sTokenTo.getSelectedItem()
+        .toString(), "TO");
 
     switch (parent.getId()) {
       case R.id.spinnerFrom:
-       /* presenter.amountChanged(tokenFromAddress, tokenToAddress, amountFromView.getText()
-            .toString(), from); */
         try {
           presenter.rxAmountChanged(tokenFromAddress, tokenToAddress, amountFromView.getText()
               .toString(), from);
         } catch (IOException e) {
           e.printStackTrace();
         }
-        presenter.rxUpdateBalance(tokenFromAddress, sTokenFrom.getSelectedItem()
-            .toString(), "FROM");
         break;
       case R.id.spinnerTo:
-        /*presenter.amountChanged(tokenFromAddress, tokenToAddress, amountToView.getText()
-            .toString(), to);  */
-
         try {
           presenter.rxAmountChanged(tokenFromAddress, tokenToAddress, amountFromView.getText()
               .toString(), from);
         } catch (IOException e) {
           e.printStackTrace();
         }
-
-        presenter.rxUpdateBalance(tokenToAddress, sTokenTo.getSelectedItem()
-            .toString(), "TO");
         break;
     }
   }
 
   @Override public void onNothingSelected(AdapterView<?> parent) {
-
   }
+
 
   public String getAddresses(String token) {
     String address = "";

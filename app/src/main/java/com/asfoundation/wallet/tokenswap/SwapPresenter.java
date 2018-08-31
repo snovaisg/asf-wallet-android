@@ -49,39 +49,18 @@ public class SwapPresenter {
     swapInteractor.approve(srcToken, destToken, amount, approveAddress, resListenner);
   }
 
+  @SuppressLint("CheckResult")
   public void showRatio(String srcToken, String destToken, String srcTokenAddress,
-      String destTokenAddress) {
+      String destTokenAddress) throws IOException {
     String tokenAmount = "1";
-    BigInteger rateWei = swapInteractor.getRates(srcTokenAddress, destTokenAddress, tokenAmount);
-    //Convert to UI/UX
-    BigDecimal rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER);
-    String ratio = "1 " + srcToken + " = " + rate.toString() + " " + destToken;
-    view.showRates(ratio);
-  }
-
-  public void amountChanged(String srcTokenAddress, String destTokenAddress, String userInputStr,
-      String source) {
-    float userInput;
-    float amount;
-    try {
-      userInput = Float.parseFloat(userInputStr.toString());
-      float rate = calcRate(srcTokenAddress, destTokenAddress, userInputStr.toString());
-      if (source.equals(view.getTo())) {
-        amount = 1 / rate * userInput;
-        String amount_str = String.format("%.6f", amount);
-        view.setTextTokenFrom(amount_str);
-      } else {
-        amount = rate * userInput;
-        String amount_str = String.format("%.6f", amount);
-        view.setTextTokenTo(amount_str);
-      }
-    } catch (Exception e) {
-      if (source.equals(view.getFrom())) {
-        view.setTextTokenTo("0");
-      } else {
-        view.setTextTokenFrom("0");
-      }
-    }
+    swapInteractor.rxGetRates(srcTokenAddress, destTokenAddress, tokenAmount)
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(rateWei -> {
+          BigDecimal rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER);
+          String ratio = "1 " + srcToken + " = " + rate.toString() + " " + destToken;
+          view.showRates(ratio);
+        });
   }
 
   public void amountChangedRate(float rate, float userInput, String source) {
@@ -120,19 +99,6 @@ public class SwapPresenter {
         .subscribe(rate -> amountChangedRate(rate, userInput, source));
   }
 
-  public float calcRate(String srcToken, String destToken, String amount) {
-    try {
-
-      BigInteger rateWei = swapInteractor.getRates(srcToken, destToken, amount);
-      float rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER)
-          .floatValue();
-      return rate;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return 0;
-  }
-
   @SuppressLint("CheckResult")
   public Single<Float> rxCalcRate(String srcToken, String destToken, String amount)
       throws IOException {
@@ -146,7 +112,7 @@ public class SwapPresenter {
   }
 
   public void swap(String srcToken, String destToken, String amount, String toAddress, String approveAddress) {
-    String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    final String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
     //ether to token
     if (srcToken.equals(ether_add)) {
       swapEtherToToken(destToken, amount, toAddress);
@@ -185,7 +151,6 @@ public class SwapPresenter {
     swapTokenToTokenApprove(srcToken, destToken, amount, toAddress, approveAddress);
   }
 
-
   public void swapTokenToEther(String srcToken, String destToken, String amount, String toAddress,
       String approveAddress) {
     float allowance = checkAllowance(approveAddress, srcToken);
@@ -202,37 +167,7 @@ public class SwapPresenter {
     return swapInteractor.getAllowance(spender, toAddress);
   }
 
-  public void updateBalances(String tokenFrom, String tokenFromName, String tokenTo,
-      String tokenToName) {
-    String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-    BigInteger amountFromWei;
-    BigInteger amountToWei;
-    if (tokenFrom.equals(ether_add)) {
-      amountFromWei = swapInteractor.getEtherBalance();
-    } else {
-      amountFromWei = swapInteractor.getBalance(tokenFrom);
-    }
-    if (tokenTo.equals(ether_add)) {
-      amountToWei = swapInteractor.getEtherBalance();
-    } else {
-      amountToWei = swapInteractor.getBalance(tokenTo);
-    }
-    BigDecimal amountFromEther = Convert.fromWei(amountFromWei.toString(), Convert.Unit.ETHER);
-    BigDecimal amountToEther = Convert.fromWei(amountToWei.toString(), Convert.Unit.ETHER);
-
-    String text = "balance\n"
-        + tokenFromName
-        + " "
-        + amountFromEther.toString()
-        + "\n"
-        + tokenToName
-        + " "
-        + amountToEther.toString();
-    view.showBalanceTitle(text);
-  }
-
   @SuppressLint("CheckResult") public void rxGetAndShowBalance(String contractAddress) {
-
     swapInteractor.rxGetBalance(contractAddress)
         .subscribeOn(Schedulers.newThread())
         .subscribe(x -> {

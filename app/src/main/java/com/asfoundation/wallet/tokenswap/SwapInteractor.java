@@ -1,7 +1,6 @@
 package com.asfoundation.wallet.tokenswap;
 
 import android.annotation.SuppressLint;
-import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.repository.WalletRepositoryType;
 import io.reactivex.Single;
 import java.io.IOException;
@@ -36,19 +35,6 @@ public class SwapInteractor {
     this.swapProofFactory = new SwapProofFactory();
   }
 
-  public BigInteger getRates(String srcToken, String destToken,
-      String tokenAmount) {
-    if (swapRates.exists(srcToken, destToken)) return swapRates.getRate(srcToken, destToken);
-    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setSrcToken(srcToken);
-    swapProof.setDestToken(destToken);
-    swapProof.setTokenAmount(Convert.toWei(tokenAmount, Convert.Unit.ETHER));
-    swapProof.setFunction(swapDataMapper.getDataExpectedRate(swapProof));
-
-    BigInteger rateWei = swapBlockchainWriter.writeGetterSwapProof(swapProof);
-    swapRates.saveRate(srcToken, destToken, rateWei);
-    return rateWei;
-  }
 
   @SuppressLint("CheckResult")
   public Single<BigInteger> rxGetRates(String srcToken, String destToken, String tokenAmount)
@@ -124,7 +110,6 @@ public class SwapInteractor {
   }
 
   public float getAllowance(String spender, String toAddress) {
-
     SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
     String ownder = walletRepositoryType.getDefaultWallet()
         .blockingGet().address.toString();
@@ -156,26 +141,6 @@ public class SwapInteractor {
           swapBlockchainWriter.setListener(listener);
           swapBlockchainWriter.writeSwapProof(swapProof);
         }, Throwable::printStackTrace);
-  }
-
-  public BigInteger getBalance(String contractAddress) {
-    String address = walletRepositoryType.getDefaultWallet()
-        .blockingGet().address.toString();
-    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
-    swapProof.setFromAddress(address);
-    swapProof.setFunction(swapDataMapper.getBalanceOf(swapProof));
-    swapProof.setToAddress(contractAddress);
-    BigInteger balance = swapBlockchainWriter.writeGetterSwapProof(swapProof);
-    return balance;
-  }
-
-  public BigInteger getEtherBalance() {
-    Wallet wallet = walletRepositoryType.getDefaultWallet()
-        .blockingGet();
-    BigInteger balance = walletRepositoryType.balanceInWei(wallet, 3)
-        .blockingGet()
-        .toBigInteger();
-    return balance;
   }
 
   public Single<BigInteger> rxGetEtherBalance() {
