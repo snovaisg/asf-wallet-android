@@ -5,6 +5,7 @@ import android.util.Log;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.web3j.utils.Convert;
@@ -83,6 +84,42 @@ public class SwapPresenter {
     }
   }
 
+  public void amountChangedRate(float rate, float userInput, String source) {
+    try {
+      float amount;
+      if (source.equals(view.getTo())) {
+        amount = 1 / rate * userInput;
+        String amount_str = String.format("%.6f", amount);
+        view.setTextTokenFrom(amount_str);
+      } else {
+        amount = rate * userInput;
+        String amount_str = String.format("%.6f", amount);
+        view.setTextTokenTo(amount_str);
+      }
+    } catch (Exception e) {
+      if (source.equals(view.getFrom())) {
+        view.setTextTokenTo("0");
+      } else {
+        view.setTextTokenFrom("0");
+      }
+    }
+  }
+
+  @SuppressLint("CheckResult")
+  public void rxAmountChanged(String srcTokenAddress, String destTokenAddress, String userInputStr,
+      String source) throws IOException {
+    if (userInputStr.toString()
+        .isEmpty()) {
+      view.setTextTokenFrom("");
+      view.setTextTokenTo("");
+      return;
+    }
+    float userInput = Float.parseFloat(userInputStr.toString());
+    rxCalcRate(srcTokenAddress, destTokenAddress, userInputStr.toString()).subscribeOn(
+        Schedulers.newThread())
+        .subscribe(rate -> amountChangedRate(rate, userInput, source));
+  }
+
   public float calcRate(String srcToken, String destToken, String amount) {
     try {
 
@@ -94,6 +131,18 @@ public class SwapPresenter {
       e.printStackTrace();
     }
     return 0;
+  }
+
+  @SuppressLint("CheckResult")
+  public Single<Float> rxCalcRate(String srcToken, String destToken, String amount)
+      throws IOException {
+    return swapInteractor.rxGetRates(srcToken, destToken, amount)
+        .subscribeOn(Schedulers.newThread())
+        .flatMap(rateWei -> {
+          float rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER)
+              .floatValue();
+          return Single.just(rate);
+        });
   }
 
   public void swap(String srcToken, String destToken, String amount, String toAddress, String approveAddress) {

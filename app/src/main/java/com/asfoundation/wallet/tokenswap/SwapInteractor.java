@@ -1,8 +1,10 @@
 package com.asfoundation.wallet.tokenswap;
 
+import android.annotation.SuppressLint;
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.repository.WalletRepositoryType;
 import io.reactivex.Single;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -48,6 +50,23 @@ public class SwapInteractor {
     return rateWei;
   }
 
+  @SuppressLint("CheckResult")
+  public Single<BigInteger> rxGetRates(String srcToken, String destToken, String tokenAmount)
+      throws IOException {
+    if (swapRates.exists(srcToken, destToken)) {
+      return Single.just(swapRates.getRate(srcToken, destToken));
+    }
+    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+    swapProof.setSrcToken(srcToken);
+    swapProof.setDestToken(destToken);
+    swapProof.setTokenAmount(Convert.toWei(tokenAmount, Convert.Unit.ETHER));
+    Function function = swapDataMapper.getDataExpectedRate(swapProof);
+    swapProof.setFunction(function);
+    return swapBlockchainWriter.rxWriteGetterSwapProof(swapProof)
+        .subscribeOn(io.reactivex.schedulers.Schedulers.newThread())
+        .flatMap(ethCall -> Single.just(getResponseResultGeneral(ethCall, function)));
+  }
+
   public void swapEtherToToken(String destToken, String amount, String ToAddress,
       ResponseListener listener) {
     getGasPrice().subscribeOn(Schedulers.newThread())
@@ -60,7 +79,6 @@ public class SwapInteractor {
           swapProof.setGasPrice(Convert.toWei(gas.getGasPrice()
               .toString(), Convert.Unit.WEI));
           swapProof.setGasLimit(BigDecimal.valueOf(400000));
-
           swapBlockchainWriter.setListener(listener);
           swapBlockchainWriter.writeSwapProof(swapProof);
         }, Throwable::printStackTrace);
@@ -196,4 +214,12 @@ public class SwapInteractor {
     BigInteger result = ((Uint) response.get(0)).getValue();
     return result;
   }
+
+  public BigInteger getResponseResultGeneral(EthCall ethCall, Function function) {
+    List<Type> response =
+        FunctionReturnDecoder.decode(ethCall.getValue(), function.getOutputParameters());
+    BigInteger result = ((Uint) response.get(0)).getValue();
+    return result;
+  }
+
 }
