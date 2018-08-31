@@ -26,7 +26,9 @@ public class SwapEtherToTokenActivity extends BaseActivity
   private Spinner sTokenFrom;
   private Spinner sTokenTo;
   private TextView tvShowRates;
-  private TextView tvSwapBalance;
+  private TextView tvSwapBalanceTitle;
+  private TextView tvSwapBalanceTokenFrom;
+  private TextView tvSwapBalanceTokenTo;
   private final String from = "FROM";
   private final String to = "TO";
   private TextWatcher textWatcherFrom;
@@ -49,7 +51,9 @@ public class SwapEtherToTokenActivity extends BaseActivity
     sTokenFrom = findViewById(R.id.spinnerFrom);
     sTokenTo = findViewById(R.id.spinnerTo);
     tvShowRates = findViewById(R.id.tvRates);
-    tvSwapBalance = findViewById(R.id.tvSwapBalance);
+    tvSwapBalanceTitle = findViewById(R.id.tvSwapBalanceTitle);
+    tvSwapBalanceTokenFrom = findViewById(R.id.tvSwapBalanceTokenFrom);
+    tvSwapBalanceTokenTo = findViewById(R.id.tvSwapBalanceTokenTo);
     findViewById(R.id.bSwap).setOnClickListener(v -> clickedSwap());
 
     sTokenFrom.setOnItemSelectedListener(this);
@@ -171,16 +175,14 @@ public class SwapEtherToTokenActivity extends BaseActivity
       case R.id.spinnerFrom:
         presenter.amountChanged(tokenFromAddress, tokenToAddress, amountFromView.getText()
             .toString(), from);
-        presenter.updateBalances(tokenFromAddress, sTokenFrom.getSelectedItem()
-            .toString(), tokenToAddress, sTokenTo.getSelectedItem()
-            .toString());
+        presenter.rxUpdateBalance(tokenFromAddress, sTokenFrom.getSelectedItem()
+            .toString(), "FROM");
         break;
       case R.id.spinnerTo:
         presenter.amountChanged(tokenFromAddress, tokenToAddress, amountToView.getText()
             .toString(), to);
-        presenter.updateBalances(tokenFromAddress, sTokenFrom.getSelectedItem()
-            .toString(), tokenToAddress, sTokenTo.getSelectedItem()
-            .toString());
+        presenter.rxUpdateBalance(tokenToAddress, sTokenTo.getSelectedItem()
+            .toString(), "TO");
         break;
     }
   }
@@ -222,8 +224,16 @@ public class SwapEtherToTokenActivity extends BaseActivity
     return from;
   }
 
-  @Override public void showBalances(String text) {
-    tvSwapBalance.setText(text);
+  @Override public void showBalanceTitle(String text) {
+    tvSwapBalanceTitle.setText(text);
+  }
+
+  @Override public void showBalanceTokenFrom(String text) {
+    tvSwapBalanceTokenFrom.setText(text);
+  }
+
+  @Override public void showBalanceTokenTo(String text) {
+    tvSwapBalanceTokenTo.setText(text);
   }
 }
 

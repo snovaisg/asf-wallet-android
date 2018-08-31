@@ -2,6 +2,8 @@ package com.asfoundation.wallet.tokenswap;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -177,7 +179,7 @@ public class SwapPresenter {
         + tokenToName
         + " "
         + amountToEther.toString();
-    view.showBalances(text);
+    view.showBalanceTitle(text);
   }
 
   @SuppressLint("CheckResult") public void rxGetAndShowBalance(String contractAddress) {
@@ -188,6 +190,40 @@ public class SwapPresenter {
           BigInteger balanceWei = swapInteractor.getResponseResult(x, contractAddress);
           Log.d("swapLog7", "result is " + balanceWei.toString());
         });
+  }
+
+  @SuppressLint("CheckResult")
+  public void rxUpdateBalance(String tokenFrom, String tokenFromName, String source) {
+    getBalance(tokenFrom).subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(tokenFromString -> {
+          if (source.equals("FROM")) {
+            view.showBalanceTitle("balance");
+            view.showBalanceTokenFrom(String.format(tokenFromName + " %.6f",
+                Convert.fromWei(tokenFromString, Convert.Unit.ETHER)
+                    .floatValue()));
+          } else {
+            view.showBalanceTitle("balance");
+            view.showBalanceTokenTo(String.format(tokenFromName + " %.6f",
+                Convert.fromWei(tokenFromString, Convert.Unit.ETHER)
+                    .floatValue()));
+          }
+        });
+  }
+
+  public Single<String> getBalance(String tokenAdress) {
+    final String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    switch (tokenAdress) {
+      case ether_add:
+        return swapInteractor.rxGetEtherBalance()
+            .subscribeOn(Schedulers.newThread())
+            .flatMap(n -> Single.just(n.toString()));
+      default:
+        return swapInteractor.rxGetBalance(tokenAdress)
+            .subscribeOn(Schedulers.newThread())
+            .flatMap(ethCall -> Single.just(swapInteractor.getResponseResult(ethCall, tokenAdress)
+                .toString()));
+    }
   }
 
 }

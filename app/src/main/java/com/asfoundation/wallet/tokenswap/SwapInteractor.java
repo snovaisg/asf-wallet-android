@@ -160,6 +160,13 @@ public class SwapInteractor {
     return balance;
   }
 
+  public Single<BigInteger> rxGetEtherBalance() {
+    return walletRepositoryType.getDefaultWallet()
+        .subscribeOn(io.reactivex.schedulers.Schedulers.newThread())
+        .flatMap(wallet -> walletRepositoryType.balanceInWei(wallet, 3))
+        .map(balanceWei -> balanceWei.toBigInteger());
+  }
+
   public rx.Observable<EthGasPrice> getGasPrice() {
     Web3j web3 =
         new Web3jFactory().build(new HttpService("https://ropsten.infura.io/iY5eRaUoUfxTNNfCDKRh"));

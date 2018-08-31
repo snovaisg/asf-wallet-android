@@ -130,16 +130,42 @@
       app:layout_constraintTop_toBottomOf="@+id/tvSwapFor"
       />
   <TextView
-      android:id="@+id/tvSwapBalance"
+      android:id="@+id/tvSwapBalanceTokenTo"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="442dp"
-      android:layout_marginEnd="228dp"
+      android:layout_marginBottom="93dp"
+      android:layout_marginEnd="225dp"
       android:layout_marginStart="183dp"
-      android:layout_marginTop="198dp"
-      app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_marginTop="17dp"
+      app:layout_constraintBottom_toTopOf="@+id/tvSwapFor"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/tvSwapBalanceTokenFrom"
+      />
+  <TextView
+      android:id="@+id/tvSwapBalanceTokenFrom"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="17dp"
+      android:layout_marginEnd="225dp"
+      android:layout_marginStart="183dp"
+      android:layout_marginTop="7dp"
+      app:layout_constraintBottom_toTopOf="@+id/tvSwapBalanceTokenTo"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/tvSwapBalanceTitle"
+      />
+  <TextView
+      android:id="@+id/tvSwapBalanceTitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="7dp"
+      android:layout_marginEnd="225dp"
+      android:layout_marginStart="183dp"
+      android:layout_marginTop="39dp"
+      app:layout_constraintBottom_toTopOf="@+id/tvSwapBalanceTokenFrom"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/tvSwapTitle"
       />
 </android.support.constraint.ConstraintLayout>

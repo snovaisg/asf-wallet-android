@@ -10,7 +10,11 @@ public interface SwapView {
 
   void setTextTokenFrom(String amount);
 
-  void showBalances(String text);
+  void showBalanceTitle(String text);
+
+  void showBalanceTokenFrom(String text);
+
+  void showBalanceTokenTo(String text);
 
   String getTo();
 
