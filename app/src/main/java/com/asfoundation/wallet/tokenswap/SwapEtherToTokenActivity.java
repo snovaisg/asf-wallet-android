@@ -109,6 +109,11 @@ public class SwapEtherToTokenActivity extends BaseActivity
     amountFromView.addTextChangedListener(textWatcherFrom);
     amountToView.addTextChangedListener(textWatcherTo);
     presenter.rxGetAndShowBalance(getString(R.string.RopstenAppCoins));
+    try {
+      presenter.testApi();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override public void showRates(String rates) {

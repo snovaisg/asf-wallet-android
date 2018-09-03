@@ -187,4 +187,9 @@ public class SwapInteractor {
     return result;
   }
 
+  @SuppressLint("CheckResult") public void testApi() {
+    KyberAddressesApi kyber = new KyberAddressesApi();
+    kyber.getJson();
+  }
+
 }

@@ -233,4 +233,8 @@ public class SwapPresenter {
     rxUpdateBalance(tokenFromAddress, tokenFromAddressName, "FROM");
     rxUpdateBalance(tokenToAddress, tokenToAddressName, "TO");
   }
+
+  public void testApi() throws IOException {
+    swapInteractor.testApi();
+  }
 }
