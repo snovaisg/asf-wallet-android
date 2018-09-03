@@ -26,6 +26,10 @@ public class SwapPresenter {
 
       @Override public void onError(Throwable error) {
         error.printStackTrace();
+        String msg = "Error! Insufficient funds";
+        Single.just("")
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(ignorable -> view.showToast(msg));
       }
     };
   }
@@ -60,7 +64,7 @@ public class SwapPresenter {
           BigDecimal rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER);
           String ratio = "1 " + srcToken + " = " + rate.toString() + " " + destToken;
           view.showRates(ratio);
-        });
+        }, throwable -> printError(throwable));
   }
 
   public void amountChangedRate(float rate, float userInput, String source) {
@@ -96,7 +100,15 @@ public class SwapPresenter {
     float userInput = Float.parseFloat(userInputStr.toString());
     rxCalcRate(srcTokenAddress, destTokenAddress, userInputStr.toString()).subscribeOn(
         Schedulers.newThread())
-        .subscribe(rate -> amountChangedRate(rate, userInput, source));
+        .subscribe(rate -> amountChangedRate(rate, userInput, source),
+            throwable -> printError(throwable));
+  }
+
+  @SuppressLint("CheckResult") public void printError(Throwable e) {
+    String msg = "Please check your connection to the Internet";
+    Single.just("")
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(ignorable -> view.showToast(msg));
   }
 
   @SuppressLint("CheckResult")
@@ -192,7 +204,7 @@ public class SwapPresenter {
                 Convert.fromWei(tokenFromString, Convert.Unit.ETHER)
                     .floatValue()));
           }
-        });
+        }, throwable -> printError(throwable));
   }
 
   public Single<String> getBalance(String tokenAdress) {
@@ -210,4 +222,15 @@ public class SwapPresenter {
     }
   }
 
+  public void SpinnerItemSelected(String tokenFromAddress, String tokenFromAddressName,
+      String tokenToAddress, String tokenToAddressName) {
+    try {
+      showRatio(tokenFromAddressName, tokenToAddressName, tokenFromAddress, tokenToAddress);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    rxUpdateBalance(tokenFromAddress, tokenFromAddressName, "FROM");
+    rxUpdateBalance(tokenToAddress, tokenToAddressName, "TO");
+  }
 }

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.asf.wallet.R;
 import com.asfoundation.wallet.ui.BaseActivity;
 import dagger.android.AndroidInjection;
@@ -176,19 +177,14 @@ public class SwapEtherToTokenActivity extends BaseActivity
         .toString());
     String tokenToAddress = getAddresses(sTokenTo.getSelectedItem()
         .toString());
+    String tokenFromAddressName = sTokenFrom.getSelectedItem()
+        .toString();
+    String tokenToAddressName = sTokenTo.getSelectedItem()
+        .toString();
 
-    try {
-      presenter.showRatio(sTokenFrom.getSelectedItem()
-          .toString(), sTokenTo.getSelectedItem()
-          .toString(), tokenFromAddress, tokenToAddress);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    presenter.SpinnerItemSelected(tokenFromAddress, tokenFromAddressName, tokenToAddress,
+        tokenToAddressName);
 
-    presenter.rxUpdateBalance(tokenFromAddress, sTokenFrom.getSelectedItem()
-        .toString(), "FROM");
-    presenter.rxUpdateBalance(tokenToAddress, sTokenTo.getSelectedItem()
-        .toString(), "TO");
 
     switch (parent.getId()) {
       case R.id.spinnerFrom:
@@ -245,6 +241,11 @@ public class SwapEtherToTokenActivity extends BaseActivity
 
   public String getFrom() {
     return from;
+  }
+
+  @Override public void showToast(String text) {
+    Toast.makeText(this, text, Toast.LENGTH_LONG)
+        .show();
   }
 
   @Override public void showBalanceTitle(String text) {

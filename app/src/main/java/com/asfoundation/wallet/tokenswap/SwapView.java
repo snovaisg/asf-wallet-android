@@ -19,4 +19,6 @@ public interface SwapView {
   String getTo();
 
   String getFrom();
+
+  void showToast(String text);
 }
