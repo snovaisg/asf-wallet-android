@@ -58,6 +58,7 @@ import com.asfoundation.wallet.service.TrustWalletTickerService;
 import com.asfoundation.wallet.tokenswap.SwapBlockchainWriter;
 import com.asfoundation.wallet.tokenswap.SwapDataMapper;
 import com.asfoundation.wallet.tokenswap.SwapInteractor;
+import com.asfoundation.wallet.tokenswap.SwapPendingTransactions;
 import com.asfoundation.wallet.tokenswap.SwapProofWriter;
 import com.asfoundation.wallet.tokenswap.SwapRates;
 import com.asfoundation.wallet.tokenswap.SwapTransactionFactory;
@@ -365,8 +366,9 @@ import static com.asfoundation.wallet.AirdropService.BASE_URL;
   }
 
   @Singleton @Provides SwapInteractor provideSwapInteractor(SwapProofWriter swapBlockchainWriter,
-      WalletRepositoryType walletRepositoryType) {
+      WalletRepositoryType walletRepositoryType,
+      PendingTransactionService pendingTransactionService) {
     return new SwapInteractor(swapBlockchainWriter, new SwapDataMapper(), new SwapRates(),
-        walletRepositoryType);
+        walletRepositoryType, pendingTransactionService, new SwapPendingTransactions());
   }
 }

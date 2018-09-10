@@ -22,6 +22,8 @@ public class SwapPresenter {
     this.swapInteractor = swapInteractor;
     this.transactionSentListener = new ResponseListener<String>() {
       @Override public void onResponse(String s) {
+        swapInteractor.registerTxhash(s);
+        checkPending();
       }
 
       @Override public void onError(Throwable error) {
@@ -64,7 +66,7 @@ public class SwapPresenter {
           BigDecimal rate = Convert.fromWei(rateWei.toString(), Convert.Unit.ETHER);
           String ratio = "1 " + srcToken + " = " + rate.toString() + " " + destToken;
           view.showRates(ratio);
-        }, throwable -> printError(throwable));
+        }, throwable -> showError(throwable));
   }
 
   public void amountChangedRate(float rate, float userInput, String source) {
@@ -101,10 +103,10 @@ public class SwapPresenter {
     rxCalcRate(srcTokenAddress, destTokenAddress, userInputStr.toString()).subscribeOn(
         Schedulers.newThread())
         .subscribe(rate -> amountChangedRate(rate, userInput, source),
-            throwable -> printError(throwable));
+            throwable -> showError(throwable));
   }
 
-  @SuppressLint("CheckResult") public void printError(Throwable e) {
+  @SuppressLint("CheckResult") public void showError(Throwable e) {
     String msg = "Please check your connection to the Internet";
     Single.just("")
         .observeOn(AndroidSchedulers.mainThread())
@@ -204,7 +206,7 @@ public class SwapPresenter {
                 Convert.fromWei(tokenFromString, Convert.Unit.ETHER)
                     .floatValue()));
           }
-        }, throwable -> printError(throwable));
+        }, throwable -> showError(throwable));
   }
 
   public Single<String> getBalance(String tokenAdress) {
@@ -234,7 +236,20 @@ public class SwapPresenter {
     rxUpdateBalance(tokenToAddress, tokenToAddressName, "TO");
   }
 
-  public void testApi() throws IOException {
+  public void testApi() {
     swapInteractor.testApi();
+  }
+
+  public void checkPending() {
+    swapInteractor.checkPending()
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(isPending -> {
+          if (isPending) {
+            view.showToast("There is one transaction pending");
+          } else {
+            view.showToast("No transaction is pending");
+          }
+        });
   }
 }

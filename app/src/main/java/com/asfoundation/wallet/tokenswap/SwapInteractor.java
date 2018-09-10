@@ -1,7 +1,9 @@
 package com.asfoundation.wallet.tokenswap;
 
 import android.annotation.SuppressLint;
+import com.asfoundation.wallet.repository.PendingTransactionService;
 import com.asfoundation.wallet.repository.WalletRepositoryType;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,13 +27,19 @@ public class SwapInteractor {
   private SwapProofFactory swapProofFactory;
   private SwapRates swapRates;
   private WalletRepositoryType walletRepositoryType;
+  private PendingTransactionService pendingTransactionService;
+  private SwapPendingTransactions swapPendingTransactions;
 
   public SwapInteractor(SwapProofWriter swapBlockchainWriter, SwapDataMapper swapDataMapper,
-      SwapRates swapRates, WalletRepositoryType walletRepositoryType) {
+      SwapRates swapRates, WalletRepositoryType walletRepositoryType,
+      PendingTransactionService pendingTransactionService,
+      SwapPendingTransactions swapPendingTransactions) {
     this.swapBlockchainWriter = swapBlockchainWriter;
     this.swapDataMapper = swapDataMapper;
     this.swapRates = swapRates;
     this.walletRepositoryType = walletRepositoryType;
+    this.pendingTransactionService = pendingTransactionService;
+    this.swapPendingTransactions = swapPendingTransactions;
     this.swapProofFactory = new SwapProofFactory();
   }
 
@@ -191,5 +199,19 @@ public class SwapInteractor {
     KyberAddressesApi kyber = new KyberAddressesApi();
     kyber.getJson();
   }
+
+  public Observable<Boolean> checkPending() {
+    SwapProof swapProof = swapProofFactory.createDefaultSwapProof();
+    String txHash = swapPendingTransactions.get();
+    return pendingTransactionService.checkTransactionState(txHash, swapProof.getChainId())
+        .subscribeOn(io.reactivex.schedulers.Schedulers.newThread())
+        .flatMap(pendingTransaction -> Observable.just(pendingTransaction.isPending()));
+  }
+
+  public void registerTxhash(String txHash) {
+    swapPendingTransactions.set(txHash);
+  }
+
+
 
 }

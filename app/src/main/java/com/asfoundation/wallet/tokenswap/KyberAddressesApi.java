@@ -27,8 +27,8 @@ public class KyberAddressesApi {
 
     KyberApi client = retrofit.create(KyberApi.class);
 
-    Call<List<Object>> call = client.getAddresses();
-    call.enqueue(new Callback<List<Object>>() {
+    Call<List<KyberApi.AddressResponse>> call = client.getAddresses();
+    call.enqueue(new Callback<List<KyberApi.AddressResponse>>() {
       @Override public void onResponse(Call call, Response response) {
         Log.d("swpLog9", response.body()
             .toString());
