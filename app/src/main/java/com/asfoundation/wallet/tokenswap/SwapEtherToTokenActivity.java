@@ -111,7 +111,7 @@ public class SwapEtherToTokenActivity extends BaseActivity
     presenter.rxGetAndShowBalance(getString(R.string.RopstenAppCoins));
     try {
       presenter.testApi();
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

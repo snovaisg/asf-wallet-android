@@ -26,7 +26,7 @@ public class SwapPresenter {
         checkPending();
       }
 
-      @Override public void onError(Throwable error) {
+      @SuppressLint("CheckResult") @Override public void onError(Throwable error) {
         error.printStackTrace();
         String msg = "Error! Insufficient funds";
         Single.just("")
@@ -99,11 +99,13 @@ public class SwapPresenter {
       view.setTextTokenTo("");
       return;
     }
-    float userInput = Float.parseFloat(userInputStr.toString());
-    rxCalcRate(srcTokenAddress, destTokenAddress, userInputStr.toString()).subscribeOn(
-        Schedulers.newThread())
-        .subscribe(rate -> amountChangedRate(rate, userInput, source),
-            throwable -> showError(throwable));
+    try {
+      float userInput = Float.parseFloat(userInputStr.toString());
+      rxCalcRate(srcTokenAddress, destTokenAddress, userInputStr.toString()).subscribeOn(Schedulers.newThread())
+          .subscribe(rate -> amountChangedRate(rate, userInput, source), throwable -> showError(throwable));
+    } catch(Exception e){
+      //do nothing
+    }
   }
 
   @SuppressLint("CheckResult") public void showError(Throwable e) {
@@ -125,8 +127,20 @@ public class SwapPresenter {
         });
   }
 
+  private boolean isConvertibleToFloat(String number){
+    try {
+      Float.parseFloat(number);
+      return true;
+    } catch(Exception e){
+      return false;
+    }
+  }
+
   public void swap(String srcToken, String destToken, String amount, String toAddress, String approveAddress) {
     final String ether_add = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+
+    if (!isConvertibleToFloat(amount))
+      return;
     //ether to token
     if (srcToken.equals(ether_add)) {
       swapEtherToToken(destToken, amount, toAddress);
@@ -240,7 +254,7 @@ public class SwapPresenter {
     swapInteractor.testApi();
   }
 
-  public void checkPending() {
+  @SuppressLint("CheckResult") public void checkPending() {
     swapInteractor.checkPending()
         .subscribeOn(Schedulers.newThread())
         .observeOn(AndroidSchedulers.mainThread())
